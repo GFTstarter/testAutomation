@@ -133,6 +133,15 @@ public class TicketController {
 		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
 	}
 	
+	
+	//Delete info
+		@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
+			public String deleteTicket(@RequestParam("delete_id_ticket") Long id) {
+			
+				ticketDao.delete(id);
+			
+			return "redirect:ticketsList";
+		}
 	/** Map the URL back on GET method.
 	 * If the user hits the back button on the end of the page, the session will be erased,
 	 * so this way the attributes Project and Tag don't pass to another page.

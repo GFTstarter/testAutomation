@@ -10,4 +10,5 @@ public interface TicketDao{
 	Ticket getTicketByJira(String jira);
 	List<Ticket> findAllByReleaseId(Integer id_release);
 	void delete(Long id);
+	void updateColumnValue (Long id, String column,String value);
 }

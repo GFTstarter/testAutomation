@@ -187,10 +187,10 @@
 								<form:option value="On Hold" label="On Hold" />
 							</form:select>
 						</div>
-						<form:input type="" cssClass="form-control" path="id_release" name="id_release" id="id_release" value="${id_release}" /> 
-						<input type="" name="project" id="project" value="${project}" /> 
-						<input type="" name="tag" id="tag" value="${tag}" /> 
-						<form:input type="" cssClass="form-control" path="id_ticket" name="id_ticket" id="id_ticket" value="${id_ticket}" />
+						<form:input type="hidden" cssClass="form-control" path="id_release" name="id_release" id="id_release" value="${id_release}" /> 
+						<input type="hidden" name="project" id="project" value="${project}" /> 
+						<input type="hidden" name="tag" id="tag" value="${tag}" /> 
+						<form:input type="hidden" cssClass="form-control" path="id_ticket" name="id_ticket" id="id_ticket" value="${id_ticket}" />
 					</div>
 
 					<div class="modal-footer">

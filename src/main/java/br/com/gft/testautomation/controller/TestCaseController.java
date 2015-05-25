@@ -24,6 +24,7 @@ import br.com.gft.testautomation.common.login.LoginUtils;
 import br.com.gft.testautomation.common.model.TestCases;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.TestCaseDao;
+import br.com.gft.testautomation.common.repositories.TicketDao;
 
 /** Controller responsible for the testcase.jsp and the URLS testCases and updateTestCases.
  * This controller displays the testcases list, the form to add a new test case, and
@@ -38,6 +39,9 @@ public class TestCaseController {
 	/* Autowires the ReleaseDaoImpl bean */
 	@Autowired
 	TestCaseDao testCaseDao;
+	
+	@Autowired 
+	TicketDao ticketDao;
 	
 	/** Map the URL testCases on GET method.
 	 * Receives as parameters from the previous page: the ticket description, the
@@ -189,7 +193,7 @@ public class TestCaseController {
 			@ModelAttribute("ticket") Ticket ticket) {
 		
 		/* Update the time to run all tests*/
-		testCaseDao.updateColumnValue(id_ticket, "run_time", run_time);
+		ticketDao.updateColumnValue(id_ticket, "run_time", run_time);
 		
 		/* Redirect to the TestCasesController GET URL. */
 		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
@@ -208,15 +212,31 @@ public class TestCaseController {
 			@ModelAttribute("ticket") Ticket ticket,
 			@ModelAttribute("tf_jira") String jira
 			) {
-				
-						
-		//Do the reset tests using the remove method of Mongo template
-		testCaseDao.updateReset("On hold", "", "", "");
+		
+		//Create resetTestCase object to set values for the reset operation into the testCase 
+		TestCases resetTestCase = new TestCases();
+		resetTestCase.setTestcase_id(id);
+		resetTestCase.setStatus("On hold");
+		resetTestCase.setTested_by("");
+		resetTestCase.setTested_on("");
+		resetTestCase.setTestcase_description("");
+		resetTestCase.setComments("");
+		resetTestCase.setPre_requisite("");
+		resetTestCase.setResults("");
+		
+		//Do the reset tests
+		testCaseDao.saveOrUpdate(resetTestCase);
 
 		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
 	}
 		
-	// Map the playTestCases on POST method.
+	/** Map the playTestCases on POST method.
+	 * Here the controller controls the edit function from the modal.
+	 * Receive as parameters: the data that perhaps will be edited (status, testedBy,
+	 * testedOn, preRequisite, testcaseDescription, results and comments), the 
+	 * testcase id used by the update method, and the parameters ticket id, tag,
+	 * ticket description, ticket developer, ticket tester and ticket environment to properly
+	 * redirect the page after edit. */
 	@RequestMapping(value = "/playTestCase", method = RequestMethod.POST)
 	public String playTestCase(@ModelAttribute("play_testcase_id") Long id,
 			@ModelAttribute("id_ticket") Integer id_ticket,
@@ -244,7 +264,10 @@ public class TestCaseController {
 		playTestCase.setStatus("On hold");
 		playTestCase.setTested_by(user_tested_by);
 		playTestCase.setTested_on(sData);
+		playTestCase.setTestcase_description("");
 		playTestCase.setComments("");
+		playTestCase.setPre_requisite("");
+		playTestCase.setResults("");
 	
 		//Do the reset tests using the remove method of Mongo template
 		testCaseDao.saveOrUpdate(playTestCase);

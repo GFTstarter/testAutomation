@@ -250,9 +250,13 @@
 							<div class="form-group">
 								<label for="testCaseStatus">Status</label>
 								<form:select path="status" cssClass="form-control" id="testCaseStatus">
-									<form:option value="Pending" label="Pending" />
-									<form:option value="Passed" label="Passed" />
-									<form:option value="Failed" label="Failed" />
+									<form:option value="On hold" label="On hold" />
+									<form:option value="In development" label="In development" />
+									<form:option value="Ready for test" label="Ready for test" />
+									<form:option value="Testing In SIT" label="Testing In SIT" />
+									<form:option value="Ready for UAT" label="Ready for UAT" />
+									<form:option value="Testing in UAT" label="Testing in UAT" />
+									<form:option value="Closed" label="Closed" />					
 								</form:select>
 							</div>
 							<div class="form-group">

@@ -7,7 +7,9 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 import br.com.gft.testautomation.common.model.Ticket;
@@ -37,18 +39,49 @@ public class TicketDaoJdbc implements TicketDao{
 		}
 		else{
 			//insert
-			String sql = "INSERT INTO tickets (id_tickets, id_release, jira, description, environment, developer,"
+			String sql = "INSERT INTO tickets (id_ticket, id_release, jira, description, environment, developer,"
 						+ " tester, status, run_time, testcase_status) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
-			jdbcTemplate.update(sql);
+			jdbcTemplate.update(sql, ticket.getId_release(), ticket.getJira(), ticket.getDescription(), 
+					ticket.getEnvironment(), ticket.getDeveloper(), ticket.getTester(), ticket.getStatus(), 
+					ticket.getRun_time(), ticket.getTestcase_status());
 		}
 		
 	}
 
+	/*Return ticket register by the jira specified, the query is set directly to 
+	*the return statement because it will be only one row
+	*/
 	@Override
 	public Ticket getTicketByJira(String jira) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		System.out.println("jira = " + jira);
+		
+		String sql = "SELECT * FROM tickets WHERE jira = '"+ jira +"'";
+		
+		return jdbcTemplate.query(sql, new ResultSetExtractor<Ticket>() {
+
+			@Override
+			public Ticket extractData(ResultSet rs) throws SQLException,
+					DataAccessException {
+					
+				if(rs.next()){
+					Ticket ticket = new Ticket();
+					ticket.setId_ticket(rs.getLong("id_ticket"));
+					ticket.setId_release(rs.getLong("id_release"));
+					ticket.setJira(rs.getString("jira"));
+					ticket.setDescription(rs.getString("description"));
+					ticket.setEnvironment(rs.getString("environment"));
+					ticket.setDeveloper(rs.getString("developer"));
+					ticket.setTester(rs.getString("tester"));
+					ticket.setStatus(rs.getString("status"));
+					ticket.setRun_time(rs.getString("run_time"));
+					ticket.setTestcase_status(rs.getString("testcase_status"));
+					return ticket;
+				}
+				return null;
+			}
+		});
 	}
 
 	
@@ -80,6 +113,16 @@ public class TicketDaoJdbc implements TicketDao{
 		
 		return listTickets;
 	}
+
+	
+	@Override
+	public void updateColumnValue(Long id, String column, String value) {
+		
+		String sql = "UPDATE tickets SET "+ column + " = ? WHERE id_ticket = ?";
+		
+		jdbcTemplate.update(sql, value, id);
+	}
+	
 
 	@Override
 	public void delete(Long id) {
