@@ -1,0 +1,85 @@
+.row {
+	padding: 40 45 45 40px;
+}
+
+.text-muted {
+	padding-bottom: 10px;
+	margin-bottom: 30px;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.footer {
+	margin-top: 70px;
+	border-top: 1px solid #e5e5e5;
+}
+
+h2 {
+	margin-bottom: 30px;
+}
+
+#newRelease {
+	margin-top: 20px;
+	float: right;
+}
+
+#buttonsRight {
+	margin-top: 20px;
+	padding-left: 90px;
+}
+
+#upload {
+	margin-left: 200px;
+}
+
+th, td, tr.tcHeader {
+	padding: 5 5 5 5;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.tcHeader {
+	width: 100%;
+}
+
+.lastLine {
+	border-bottom: none;
+}
+
+.lastLineCenter {
+	text-align: center;
+	border-bottom: none;
+}
+
+#testCases {
+	font-size: 10pt;
+}
+
+.panel-body {
+	padding-left: 5px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 8px;
+}
+
+.container {
+	margin: 0 55 55 55;
+}
+
+#buttonfloat {
+	float: right;
+}
+
+#btnLogout {
+	margin-right: 50px;
+}
+
+#navbarlabel {
+	margin-bottom: 5px;
+}
+
+#navbarimg {
+	padding-top: 8px;
+}
+
+.failedLink {
+	color: red;
+}

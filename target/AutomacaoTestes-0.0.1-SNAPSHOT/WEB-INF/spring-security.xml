@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<!-- Enable use-expressions and choosing URLs to intercept -->
+	<http auto-config="true" use-expressions="true">
+
+		<!-- URLs that anyone can access -->
+		<intercept-url pattern="/login" access="permitAll" />
+		<intercept-url pattern="/accessdenied" access="permitAll" />
+		<intercept-url pattern="/addUser" access="permitAll" />
+		<intercept-url pattern="/recoverPassword" access="permitAll" />
+		<intercept-url pattern="/resources/**" access="permitAll" />
+
+		<!-- URLs that only users with the role "USER" can access -->
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+
+		<!-- Declaring the login page, the default landing page after login, and 
+			the default page for any access denied. Also declares that Spring Security 
+			should always use default landing page after login -->
+		<form-login login-page="/login" default-target-url="/getList"
+			authentication-failure-url="/accessdenied" always-use-default-target="true" />
+
+		<!-- Declaring the default page for landing after logout -->
+		<logout logout-success-url="/login" />
+	</http>
+
+	<!-- Select users and user_roles from database -->
+	<authentication-manager  alias="authenticationManager">	
+			<authentication-provider>		
+				<jdbc-user-service id="userService"		
+					data-source-ref="dataSource" 		
+					users-by-username-query=" select username, password, enabled from users where username=?"		
+					authorities-by-username-query="select u.username, r.authority from users u where u.id_user = ur.id_user  and u.username = ?"	
+				/>		
+			</authentication-provider>		
+	</authentication-manager>
+</beans:beans>

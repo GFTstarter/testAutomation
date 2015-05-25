@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<!-- Declaring that the Spring MVC will be annotation driven -->
+	<mvc:annotation-driven />
+	<context:annotation-config />
+
+	<!-- Declaring the base controller package -->
+	<context:component-scan base-package="br.com.gft.testautomation.controller" />
+
+	<!-- Adding view resolver to show jsp's on browser -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/pages/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<!-- Declaring common beans -->
+	<bean id="loginDao" class="br.com.gft.testautomation.common.repositories.LoginDaoJdbc" />
+	<bean id="releaseDao" class="br.com.gft.testautomation.common.repositories.ReleaseDaoJdbc" />
+	<bean id="ticketDao" class="br.com.gft.testautomation.common.repositories.TicketDaoJdbc" />
+	<bean id="testCaseDao" class="br.com.gft.testautomation.common.repositories.TestCaseDaoJdbc" />
+
+	<!-- Beans used in the export to Excel module -->
+	
+	<bean id="populateHeader" class="br.com.gft.testautomation.common.export.PopulateHeader"
+		autowire-candidate="true" />
+
+	<!-- Mail sender bean -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="localhost" />
+		<property name="port" value="8090" />
+		<property name="username" value="username" />
+		<property name="password" value="password" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">false</prop>
+				<prop key="mail.smtp.starttls.enable">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="warningMail" class="br.com.gft.testautomation.common.mail.WarningMail">
+		<property name="mailSender" ref="mailSender" />
+	</bean>
+
+	<!-- Import and Export beans -->
+	
+
+	<!-- Mapping the resources (css, js, images, messages) -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Register the message.properties -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="resources/message" />
+	</bean>
+
+	<!-- Validator beans -->
+	<bean class="br.com.gft.testautomation.common.validator.ReleaseValidator" />
+
+	<!-- Multipart Resolver beans -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+</beans>
