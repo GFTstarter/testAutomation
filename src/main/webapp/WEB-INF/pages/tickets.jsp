@@ -50,18 +50,21 @@
 
 		<!-- Hidden parameters and buttons -->
 		<div class="col-md-6" id="buttonsRight">
-			<input type="hidden" name="id_release" value="${id_release}" /> <input
-				type="hidden" name="project" value="${project}" /> <input
-				type="hidden" name="tag" value="${tag}" /> <a
-				href="changeRelease?id_release=${id_release}&project=${project}&tag=${tag}"
-				class="btn btn-primary">Transfer tickets to another release <span
-				class="glyphicon glyphicon-transfer"></span></a> <a
-				href="uploadFile?id_release=${id_release}&project=${project}&tag=${tag}"
-				class="btn btn-primary">Import XML <span
-				class="glyphicon glyphicon-import"></span></a> <a
-				href="getZip?id_release=${id_release}&tag=${tag}&project=${project}"
-				class="btn btn-primary">Export all <span
-				class="glyphicon glyphicon-compressed"></span></a>
+			<input type="hidden" name="id_release" value="${id_release}" /> 
+			<input type="hidden" name="project" value="${project}" /> 
+			<input type="hidden" name="tag" value="${tag}" /> 
+				<a href="changeRelease?id_release=${id_release}&project=${project}&tag=${tag}"
+					class="btn btn-primary">Transfer tickets to another release 
+					<span class="glyphicon glyphicon-transfer"></span>
+				</a> 
+				<a href="uploadFile?id_release=${id_release}&project=${project}&tag=${tag}"
+					class="btn btn-primary">Import XML 
+					<span class="glyphicon glyphicon-import"></span>
+				</a> 
+				<a href="getZip?id_release=${id_release}&tag=${tag}&project=${project}"
+					class="btn btn-primary">Export all 
+					<span class="glyphicon glyphicon-compressed"></span>
+				</a>
 		</div>
 		<div class="footer"></div>
 
@@ -185,6 +188,7 @@
 								<form:option value="In Testing" label="In Testing" />
 								<form:option value="Ready for Testing" label="Ready for Testing" />
 								<form:option value="On Hold" label="On Hold" />
+								<form:option value="Failed" label="Failed" />
 							</form:select>
 						</div>
 						<form:input type="hidden" cssClass="form-control" path="id_release" name="id_release" id="id_release" value="${id_release}" /> 

@@ -29,13 +29,12 @@ public class TicketDaoJdbc implements TicketDao{
 	public void saveOrUpdate(Ticket ticket) {
 		if(ticket.getId_ticket() != 0){
 			//update
-			String sql = "UPDATE tickets SET tester = ?, developer = ?, status = ? "
-						+ "WHERE id_ticket = ?";
+			String sql = "UPDATE tickets SET tester = ?, developer = ?, status = ? WHERE id_ticket = ?";
 			
 			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Tester = " + 
 			ticket.getTester() + ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
 			
-			jdbcTemplate.update(sql, ticket.getTester(), ticket.getDeveloper(), ticket.getStatus());
+			jdbcTemplate.update(sql, ticket.getTester(), ticket.getDeveloper(), ticket.getStatus(), ticket.getId_ticket());
 		}
 		else{
 			//insert
@@ -57,9 +56,9 @@ public class TicketDaoJdbc implements TicketDao{
 		
 		System.out.println("jira = " + jira);
 		
-		String sql = "SELECT * FROM tickets WHERE jira = '"+ jira +"'";
+		String sql = "SELECT * FROM tickets WHERE jira = ?";
 		
-		return jdbcTemplate.query(sql, new ResultSetExtractor<Ticket>() {
+		return jdbcTemplate.query(sql, new Object[] {jira}, new ResultSetExtractor<Ticket>() {
 
 			@Override
 			public Ticket extractData(ResultSet rs) throws SQLException,

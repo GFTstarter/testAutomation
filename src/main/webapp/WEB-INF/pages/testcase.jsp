@@ -201,7 +201,8 @@
 									<form:option value="Testing In SIT" label="Testing In SIT" />
 									<form:option value="Ready for UAT" label="Ready for UAT" />
 									<form:option value="Testing in UAT" label="Testing in UAT" />
-									<form:option value="Closed" label="Closed" />								
+									<form:option value="Closed" label="Closed" />		
+									<form:option value="Failed" label="Failed" />
 								</form:select></td>
 							<td><form:input path="tested_by" cssClass="form-control"
 									placeholder="Tested By" value="${user_tested_by}" /></td>
@@ -256,7 +257,8 @@
 									<form:option value="Testing In SIT" label="Testing In SIT" />
 									<form:option value="Ready for UAT" label="Ready for UAT" />
 									<form:option value="Testing in UAT" label="Testing in UAT" />
-									<form:option value="Closed" label="Closed" />					
+									<form:option value="Closed" label="Closed" />
+									<form:option value="Failed" label="Failed" />					
 								</form:select>
 							</div>
 							<div class="form-group">

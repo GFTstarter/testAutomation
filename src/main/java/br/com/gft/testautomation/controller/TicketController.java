@@ -97,13 +97,13 @@ public class TicketController {
 			for (TestCases testCases : testCasesList){				
 				if(testCases.getStatus().equals("Failed")){		
 					//Update the TestCase_status field
-					testCaseDao.updateColumnValue(id, "status", "Failed");					
+					ticketDao.updateColumnValue(id, "testcase_status", "Failed");					
 					
 					//Then break the loop, because there's no need to keep going in this list
 					break;					
 				}else{
 					//Update the TestCase_status field
-					testCaseDao.updateColumnValue(id, "status", "Pending/Passed");	
+					ticketDao.updateColumnValue(id, "testcase_status", "Pending/Passed");	
 				}
 			}
 		}	

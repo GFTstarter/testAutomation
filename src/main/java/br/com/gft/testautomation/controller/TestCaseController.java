@@ -167,7 +167,7 @@ public class TestCaseController {
 		if (testcaseDescription == ""){
 			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time+"&msg=true";
 		}else{
-			/* Update the data using the updateFirst method from the mongo template */
+			/* Update the data using the saveOrUpdate from jdbcTemplate */
 			System.out.println(testcase_id);
 			System.out.println("From object: " + testCase.getId_ticket());
 
