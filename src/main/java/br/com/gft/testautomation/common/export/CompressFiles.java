@@ -17,6 +17,7 @@ public class CompressFiles {
 	private CompressFiles() {}
 
 	/** Method that receives a .zip file and a list of files to be compressed into this .zip file */
+	//TODO: DEBUGAR
 	public static void zipIt(File outputZipFile, List<File> files){
 		try{
 			//Creating FileOutputStream and ZipOutputStream

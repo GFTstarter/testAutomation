@@ -80,7 +80,7 @@
 					<table class="tcHeader">
 						<tr>
 							<th>Release:</th>
-							<td><c:out value="${ticket.jira}" /></td>
+							<td><c:out value="${tag}" /></td>
 							<td></td>
 							<th rowspan="5" class="lastLineCenter">${description}</th>
 							<td class="lastLine"></td>
@@ -201,7 +201,8 @@
 									<form:option value="Testing In SIT" label="Testing In SIT" />
 									<form:option value="Ready for UAT" label="Ready for UAT" />
 									<form:option value="Testing in UAT" label="Testing in UAT" />
-									<form:option value="Closed" label="Closed" />								
+									<form:option value="Closed" label="Closed" />		
+									<form:option value="Failed" label="Failed" />
 								</form:select></td>
 							<td><form:input path="tested_by" cssClass="form-control"
 									placeholder="Tested By" value="${user_tested_by}" /></td>
@@ -250,9 +251,14 @@
 							<div class="form-group">
 								<label for="testCaseStatus">Status</label>
 								<form:select path="status" cssClass="form-control" id="testCaseStatus">
-									<form:option value="Pending" label="Pending" />
-									<form:option value="Passed" label="Passed" />
-									<form:option value="Failed" label="Failed" />
+									<form:option value="On hold" label="On hold" />
+									<form:option value="In development" label="In development" />
+									<form:option value="Ready for test" label="Ready for test" />
+									<form:option value="Testing In SIT" label="Testing In SIT" />
+									<form:option value="Ready for UAT" label="Ready for UAT" />
+									<form:option value="Testing in UAT" label="Testing in UAT" />
+									<form:option value="Closed" label="Closed" />
+									<form:option value="Failed" label="Failed" />					
 								</form:select>
 							</div>
 							<div class="form-group">

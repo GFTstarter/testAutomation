@@ -1,14 +1,10 @@
 package br.com.gft.testautomation.common.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 /** Model class TestCases that corresponds to the Test_cases entity in the database*/
-@Document(collection = "testcases")
 public class TestCases {
 
 	/* Table id. Integer, primary key, autoincrement */
-	@Id
 	private long id_testcase;
 	
 	/* Task id. Text, not null. Not primary key as it is repeatable. */

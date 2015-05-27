@@ -29,10 +29,18 @@
 
 	<!-- Declaring common beans -->
 	<bean id="loginDao" class="br.com.gft.testautomation.common.repositories.LoginDaoJdbc" />
-
+	<bean id="releaseDao" class="br.com.gft.testautomation.common.repositories.ReleaseDaoJdbc" />
+	<bean id="ticketDao" class="br.com.gft.testautomation.common.repositories.TicketDaoJdbc" />
+	<bean id="testCaseDao" class="br.com.gft.testautomation.common.repositories.TestCaseDaoJdbc" />
+	
+	
+	<bean id="populateTicket" class="br.com.gft.testautomation.controller.PopulateTicket" />
+	<bean id="xmlUnmarshaller" class="br.com.gft.testautomation.common.unmarshaller.XmlUnmarshaller" />
+	
 
 	<!-- Beans used in the export to Excel module -->
-	
+	<bean id="excelDoc" class="br.com.gft.testautomation.common.export.ExcelDocument"
+		autowire-candidate="true" />
 	<bean id="populateHeader" class="br.com.gft.testautomation.common.export.PopulateHeader"
 		autowire-candidate="true" />
 

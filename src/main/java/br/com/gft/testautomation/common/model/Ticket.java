@@ -1,16 +1,11 @@
 package br.com.gft.testautomation.common.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 /** Model class Ticket that corresponds to the Tickets entity in the database.
  * All this data also appears as a Rss object, but the required values are copied 
  * into a Ticket object to be easily manipulated. */
-@Document(collection = "tickets")
 public class Ticket {
 	
 	/* Table id. Integer, primary key, autoincrement */
-	@Id
 	private long id_ticket;
 	
 	/* Ticket JIRA id. Text, not null */

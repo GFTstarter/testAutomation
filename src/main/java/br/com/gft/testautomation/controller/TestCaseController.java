@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -289,10 +287,9 @@ public class TestCaseController {
 			@ModelAttribute("te_jira") String jira
 			) {
 		
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(id));
+	
 		
-		//Do the remove using the remove method of Mongo template
+		//Do the remove 
 		testCaseDao.delete(id);
 	
 		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;

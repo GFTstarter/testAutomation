@@ -6,6 +6,8 @@
 <head>
 <%@ page isELIgnored="false"%>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="<c:url value="/resources/js/jquery-1.11.1.min.js"/>"></script>
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>" />
@@ -111,6 +113,7 @@
 							<label for="password">Password</label>
 							<form:input path="password" type="password" value="" cssClass="form-control" />
 						</div>
+						
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

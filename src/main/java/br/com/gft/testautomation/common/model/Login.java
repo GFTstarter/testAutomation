@@ -1,13 +1,9 @@
 package br.com.gft.testautomation.common.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 /** Model class Login that corresponds to the Users entity in the database*/
-@Document(collection="login") 
+
 public class Login {
 	
-	@Id
 	private long login_id;
 	/* Table id, contains the username (email) in text. Primary key */
 	private String username;

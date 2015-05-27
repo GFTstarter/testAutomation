@@ -41,7 +41,6 @@ public class ExportAllController {
 	TicketDao ticketDao;
 	
 	
-	
 	/** Map the getZip URL on GET method.
 	 * Here, the .zip file will be generated and shown in the directory.
 	 * Receive as parameters the release ID, the release tag, the release project,
@@ -56,12 +55,14 @@ public class ExportAllController {
 
 		/* Creates a list using the findAllByReleaseId */
 		List<Ticket> ticketList = ticketDao.findAllByReleaseId(id_release);
-		//Creates a list of files to store the MS-Excel documents 
-		List<File> files = new ArrayList<File>();				
-
-		String tempPath = request.getRealPath("/WEB-INF/temp");
-		tempPath = tempPath+"/";
 		
+		//Creates a list of files to store the MS-Excel documents 
+		List<File> files = new ArrayList<File>();	
+		
+		String tempPath = request.getRealPath("/WEB-INF/temp");
+		tempPath = tempPath + File.separator;
+		//String tempPath = "C:\\Users\\lnsr\\workspace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\automacaotestes\\WEB-INF\\temp\\";
+
 		/* For each Ticket object in the ticket list, check if the TestCaseStatus is Failed.
 		 * If it is, it's not supposed to export.  */
 		for (Ticket ticket : ticketList){
@@ -73,32 +74,28 @@ public class ExportAllController {
 				HSSFWorkbook workbook = new HSSFWorkbook();
 				excelDoc.createHeader(ticket.getId_ticket(), ticket.getJira(), tag, ticket.getDescription(), ticket.getEnvironment(), ticket.getDeveloper(), ticket.getTester(), ticket.getRun_time(),false);
 				excelDoc.buildExcelDocument(model, workbook, request, response);
-				
-				System.out.println("Path: " + tempPath);
-				
-				files.add(new File(tempPath + ticket.getJira()+"_Test_Plan.xls"));
+				files.add(new File(tempPath+"files"+File.separator+ticket.getJira()+"_Test_Plan.xls"));
 				
 				HSSFWorkbook workBlank = new HSSFWorkbook();
 				excelBlank.createHeader(ticket.getId_ticket(), ticket.getJira(), tag, ticket.getDescription(), ticket.getEnvironment(), ticket.getDeveloper(), ticket.getTester(), ticket.getRun_time(),true);
 				excelBlank.buildExcelDocument(model, workBlank, request, response);
-				
-				files.add(new File(tempPath + ticket.getJira() + "_Test_Plan_blank.xls"));
+				files.add(new File(tempPath+"files"+File.separator+ticket.getJira()+"_Test_Plan_blank.xls"));
 				
 			}
 		}
 		
 		//Creating a folder to keep the .zip file
-		File tempFolder = new File(tempPath);
+		File tempFolder = new File(tempPath+"exportedExcel"); 
 		tempFolder.mkdir();		
 		//Creating a .zip file
-		File zipFile = new File(tempPath +project + "_" +tag+".zip");
+		File zipFile = new File(tempPath+"exportedExcel"+File.separator+project+"_"+tag+".zip");
 		/*Accessing the zipIt method from the CompressFiles class, to create a .zip file
 		 * using the list of files */
 		CompressFiles.zipIt(zipFile, files);	
 		
 		/* Access the temporary folder where the MS-Excel documents were stored, and delete 
 		 * all the files in it */
-		File outputFolder = new File(tempPath);		
+		File outputFolder = new File(tempPath+"files");		
 		ExcelUtils.deleteFolder(outputFolder);		
 		
 		/*-------- Download .zip ----------*/
@@ -106,11 +103,11 @@ public class ExportAllController {
 		ServletContext context = request.getServletContext();
 		
 		//FileInputStream from generated .zip in temporary folder
-		File downloadFile = new File(tempPath+project+"_"+tag+".zip");
+		File downloadFile = new File(tempPath+"exportedExcel"+File.separator+project+"_"+tag+".zip");
 		FileInputStream inputStream = new FileInputStream(downloadFile);
 		
 		// get MIME type of the file
-        String mimeType = context.getMimeType(tempPath+project+"_"+tag+".zip");
+        String mimeType = context.getMimeType(tempPath+"exportedExcel"+File.separator+project+"_"+tag+".zip");
         if (mimeType == null) {
             // set to binary type if MIME mapping not found
             mimeType = "application/octet-stream";

@@ -1,14 +1,10 @@
 package br.com.gft.testautomation.common.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 /** Model class Release that corresponds to the Releases collection in the database*/
-@Document(collection = "releases")
 public class Release {
 	
 	/* Document id. Integer, primary key, auto_increment by the Sequence class*/
-	@Id
 	private long id_release;
 	
 	/* Project alias. Text, not null */

@@ -3,7 +3,6 @@ package br.com.gft.testautomation.controller;
 import java.io.File;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

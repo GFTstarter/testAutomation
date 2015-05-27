@@ -93,8 +93,9 @@
 						</a></td>
 
 						<td><a title="Click to options"
-							href="refreshTicket?project=${release.project}&tag=${release.tag}&id_release=${release.id_release}"><span
-								class="glyphicon glyphicon-open"></span> </a></td>
+							href="refreshTicket?project=${release.project}&tag=${release.tag}&id_release=${release.id_release}">
+							<span class="glyphicon glyphicon-open"></span> </a>
+						</td>
 
 						<td><a title="Click to delete" href="#" class="delete"
 							data-toggle="modal" data-id="${release.id_release}"> <span
@@ -202,7 +203,7 @@
 									name="edit_target_date" value="" cssClass="form-control" />
 							</div>
 						</div>
-						<input type="hidden" name="edit_id_release" id="edit_id_release" value="${id_release}" />
+						<form:input type="hidden" cssClass="form-control" path="id_release" name="edit_id_release" id="edit_id_release" value="${id_release}" />
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

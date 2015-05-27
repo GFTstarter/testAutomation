@@ -29,7 +29,6 @@
 </script>
 </head>
 <body >
-ghdfghdghfhy
 	<div class="container">
 		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="navbar-header">
@@ -45,13 +44,17 @@ ghdfghdghfhy
 	</div>
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
+			<!--  -->
 			<c:if test="${param.emsg != null}">
 				<div class="alert alert-danger" role="alert">All the fields
 					must not be empty.</div>
 			</c:if>
-			<c:if test="${param.smsg != null}">
+			<c:if test="${param.smsg == true}">
 				<div class="alert alert-success" role="alert">Login created
 					successfully.</div>
+			</c:if>
+			<c:if test="${param.smsg == false}">
+				<div class="alert alert-danger" role="alert">Username already exists</div>
 			</c:if>
 			<c:if test="${param.lmsg != null}">
 				<div class="alert alert-info" role="alert">You have
@@ -98,24 +101,20 @@ ghdfghdghfhy
 					</button>
 					<h4 class="modal-title" id="myModalLabel">New user</h4>
 				</div>
-				<form:form method="POST" commandName="login" action="addUser"
-					role="form">
+				<form:form method="POST" commandName="login" action="addUser" role="form">
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="username">Email</label>
-							<form:input path="username" type="email" value=""
-								cssClass="form-control" />
+							<form:input path="username" type="email" value="" cssClass="form-control" />
 						</div>
 						<div class="form-group">
 							<label for="password">Password</label>
-							<form:input path="password" type="password" value=""
-								cssClass="form-control" />
+							<form:input path="password" type="password" value="" cssClass="form-control" />
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="submit" class="btn btn-primary">Save
-							changes</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
 					</div>
 				</form:form>
 			</div>
