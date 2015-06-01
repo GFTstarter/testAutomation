@@ -64,18 +64,23 @@ public class LoginController {
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	public String addNewUser(@ModelAttribute("login") Login login){
 		
-		
+				
 		/* If any of the fields are empty, return to the page exhibing a error message */
-		if((login.getUsername().equals("")) || (login.getUsername().equals(""))  ){
+		if((login.getUsername().equals("")) || (login.getUsername().equals("")) ){
 			return "redirect:login?emsg=true";
 		}else{
 			/* If they are not empty, insert using the save method of LoginDaoImpl */
-			try {
-				loginDao.save(login);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return "redirect:login?smsg=false";
+			if(login.getPassword().equals(login.getPasswordConfirm())){
+				try {
+					loginDao.save(login);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return "redirect:login?smsg=false";
+				}
 			}
+			else
+				return "redirect:login?pcmsg=false";
+						
 			return "redirect:login?smsg=true";
 		}		
 	}

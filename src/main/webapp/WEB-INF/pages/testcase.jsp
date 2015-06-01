@@ -25,6 +25,10 @@
 	z-index: 1151 !important;
 	position: absolute;
 }
+
+.dataTables_scrollBody{
+	
+}
 </style>
 </head>
 
@@ -110,8 +114,8 @@
 						</tr>
 					</table>
 				</div>
-				<div class="panel-body">
-					<!-- Test cases table -->  
+				<div class="panel-body" >
+					<!-- Test cases table --> 
 					<table id="testCases" class="table table-bordered table-hover table-striped">
 						<thead>
 							<tr>
@@ -137,7 +141,7 @@
 									<td class="testCaseTestedBy">${testcase.tested_by}</td>
 									<td class="testCaseTestedOn">${testcase.tested_on}</td>
 									<td class="testCasePreRequisite">${testcase.pre_requisite}</td>
-									<td class="testCaseDescription">${testcase.testcase_description}</td>
+									<td class="testCaseDescription" style="width: 100px;">${testcase.testcase_description}</td>
 									<td class="testCaseResults">${testcase.results}</td>
 									<td class="testCaseComments">${testcase.comments}</td>
 																											
@@ -169,6 +173,7 @@
 							</c:forEach>
 						</tbody>
 					</table>
+					
 				</div>
 			</div>
 			
@@ -184,7 +189,7 @@
 							<th>Status</th>
 							<th>Tested By</th>
 							<th>Tested On</th>
-							<th>Pre-Requisite</th>
+							<th >Pre-Requisite</th>
 							<th>Description</th>
 							<th>Expected Results</th>
 							<th>Comments</th>

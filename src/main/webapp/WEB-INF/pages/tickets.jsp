@@ -65,6 +65,7 @@
 					class="btn btn-primary">Export all 
 					<span class="glyphicon glyphicon-compressed"></span>
 				</a>
+				
 		</div>
 		<div class="footer"></div>
 
@@ -118,6 +119,12 @@
 							href="testCases?id_ticket=${ticket.id_ticket}&jira=${ticket.jira}&tag=${tag}&description=${ticket.description}&developer=${ticket.developer}&tester=${ticket.tester}&environment=${ticket.environment}&run_time=${ticket.run_time}">
 								<span class="glyphicon glyphicon-list"></span>
 						</a></td>
+						
+						<td><a title="Click start tests" href="startTests?id_ticket=${ticket.id_ticket}&jira=${ticket.jira}&tag=${tag}&description=${ticket.description}&developer=${ticket.developer}&tester=${ticket.tester}&environment=${ticket.environment}&run_time=${ticket.run_time}"  
+							   onclick="window.open('startTests?id_ticket=${ticket.id_ticket}&jira=${ticket.jira}&tag=${tag}&description=${ticket.description}&developer=${ticket.developer}&tester=${ticket.tester}&environment=${ticket.environment}&run_time=${ticket.run_time}', 'newwindow', 'width=450, height=650'); return false;"
+							   data-id="${ticket.id_ticket}"> <span
+							   class="glyphicon glyphicon-play"></span>
+						</a></td>
 
 						<td><c:choose>
 								<c:when test="${ticket.testcase_status == 'Failed'}">
@@ -145,6 +152,7 @@
 							data-toggle="modal" data-id="${ticket.id_ticket}"> <span
 								class="glyphicon glyphicon-remove"></span>
 						</a></td>
+						
 					</tr>
 				</c:forEach>
 			</tbody>

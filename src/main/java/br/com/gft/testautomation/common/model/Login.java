@@ -10,6 +10,8 @@ public class Login {
 	/* Username password. Text, not null */
 	private String password;
 	
+	private String passwordConfirm;
+	
 	private String role;	
 	
 	
@@ -37,5 +39,11 @@ public class Login {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
 	}
 }

@@ -76,6 +76,32 @@ public class TicketController {
 		return new ModelAndView("tickets", "ticketList", ticketList);
 	}	
 	
+	
+	@RequestMapping(value = "/startTests", method = RequestMethod.GET)
+	public ModelAndView startTests(@RequestParam("description") String description,
+			@ModelAttribute("tag") String tag,
+			@RequestParam("environment") String environment,
+			@RequestParam("developer") String developer,
+			@RequestParam("tester") String tester, 
+			@RequestParam("id_ticket") Long id_ticket,
+			@RequestParam("run_time") String run_time,
+			@ModelAttribute("testCase") TestCases testCase,
+			ModelMap model) {
+		
+		/* Set a new TestCases object every time the URL its called */
+		model.addAttribute("testCase", new TestCases());		
+		
+		/* Set a new Ticket object every time the URL its called
+		 * This is used to edit the Run_time field */
+		model.addAttribute("ticket", new Ticket());	
+		
+		System.out.println("PASSOU");
+		
+		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
+		
+		return new ModelAndView("startTests", "testCasesList", testCasesList);
+	}
+	
 	/** Map the refreshTicket URL on GET method.
 	 * Properly refresh all the information that will be displayed on the next page,
 	 * receiving the parameters that also will be sent to the next page.  */
