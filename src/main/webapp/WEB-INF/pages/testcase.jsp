@@ -1,10 +1,12 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<!DOCTYPE HTML>
 <html>
 <head>
 <%@ page isELIgnored="false"%>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>" />
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/style.css"/>" />
@@ -54,6 +56,7 @@
 	</div>
 
 	<!-- Main container -->
+<div class="container">
 	<div class="row">
 		<div>
 			<ol class="breadcrumb">
@@ -462,6 +465,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 
 	<!-- Footer -->
 	<div class="footer">

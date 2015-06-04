@@ -11,5 +11,7 @@ public interface TestCaseDao{
 	void updateColumnValue (Long id, String column,String value);
 	void updateReset (String status, String tested_by,String tested_on, String comments);
 	void delete(Long id);
+	void updateTwoColumnValue(Long id_testcase, String column, String value, 
+			String column2, String value2);
 	
 }

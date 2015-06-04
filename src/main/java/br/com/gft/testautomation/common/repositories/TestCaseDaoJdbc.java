@@ -77,7 +77,7 @@ public class TestCaseDaoJdbc implements TestCaseDao {
 
 	@Override
 	public void updateColumnValue(final Long id, final String column, final String value) {
-		
+			
 		String sql = "UPDATE testcases SET "+ column + " = ? WHERE id_testcase = ?";
 		
 		jdbcTemplate.update(sql, value, id);
@@ -98,6 +98,16 @@ public class TestCaseDaoJdbc implements TestCaseDao {
 		
 		jdbcTemplate.update(sql, status, tested_by, tested_on, comments);
 		
+	}
+
+	@Override
+	public void updateTwoColumnValue(Long id_testcase, String column,
+			String value, String column2, String value2) {
+
+		String sql = "UPDATE testcases SET "+ column + " = ?, " + column2+" =?" 
+		+" WHERE id_testcase = ?";
+		
+		jdbcTemplate.update(sql, value, value2, id_testcase);
 	}
 	
 	

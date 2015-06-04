@@ -1,10 +1,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<!DOCTYPE HTML>
 <html>
 <head>
 <%@ page isELIgnored="false"%>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <script src="<c:url value="/resources/js/jquery-1.11.1.min.js"/>"></script>
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>" />
@@ -40,6 +41,7 @@
 	</div>
 
 	<!-- Main container -->
+<div class="container">
 	<div class="row">
 		<div class="col-md-6">
 			<ol class="breadcrumb">
@@ -120,8 +122,8 @@
 								<span class="glyphicon glyphicon-list"></span>
 						</a></td>
 						
-						<td><a title="Click start tests" href="startTests?id_ticket=${ticket.id_ticket}&jira=${ticket.jira}&tag=${tag}&description=${ticket.description}&developer=${ticket.developer}&tester=${ticket.tester}&environment=${ticket.environment}&run_time=${ticket.run_time}"  
-							   onclick="window.open('startTests?id_ticket=${ticket.id_ticket}&jira=${ticket.jira}&tag=${tag}&description=${ticket.description}&developer=${ticket.developer}&tester=${ticket.tester}&environment=${ticket.environment}&run_time=${ticket.run_time}', 'newwindow', 'width=450, height=650'); return false;"
+						<td><a title="Click start tests"  
+							   onclick="window.open('startTests?id_ticket=${ticket.id_ticket}', 'newwindow', 'width=450, height=650'); return false;"
 							   data-id="${ticket.id_ticket}"> <span
 							   class="glyphicon glyphicon-play"></span>
 						</a></td>
@@ -159,7 +161,7 @@
 		</table>
 		<br> <a href="back" class="btn btn-primary">Back</a>
 	</div>
-
+</div>
 	<!-- Modal to edit the ticket -->
 	<div class="modal fade" id="editModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">

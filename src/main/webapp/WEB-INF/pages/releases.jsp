@@ -1,10 +1,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<!DOCTYPE HTML>
 <html>
 <head>
 <%@ page isELIgnored="false"%>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <script src="<c:url value="/resources/js/jquery-1.11.1.min.js"/>"></script>
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/bootstrap.min.css"/>" />
@@ -50,6 +51,7 @@
 	</div>
 
 	<!-- Main container -->
+<div class="container">
 	<div class="row">
 		<div class="col-md-6">
 			<ol class="breadcrumb">
@@ -94,7 +96,7 @@
 
 						<td><a title="Click to options"
 							href="refreshTicket?project=${release.project}&tag=${release.tag}&id_release=${release.id_release}">
-							<span class="glyphicon glyphicon-open"></span> </a>
+							<span class="glyphicon glyphicon-option-horizontal"></span> </a>
 						</td>
 
 						<td><a title="Click to delete" href="#" class="delete"
@@ -106,6 +108,7 @@
 			</tbody>
 		</table>
 	</div>
+</div>
 
 	<!-- Modal to add new release -->
 	<div class="modal fade" id="addModal" tabindex="-1" role="dialog"

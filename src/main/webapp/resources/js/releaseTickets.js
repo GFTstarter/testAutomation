@@ -1,5 +1,6 @@
 /* Functions to be ready at page load */
 $(document).ready(function() {
+	
 	$('#table_id').dataTable({
 		stateSave: true,
 		"columns" : [ {

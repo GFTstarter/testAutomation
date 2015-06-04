@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ import br.com.gft.testautomation.common.repositories.TicketDao;
 @SessionAttributes({"project", "tag", "id_release"})
 public class TicketController {
 
+	
 	/* Autowires the TicketDaoImpl bean */
 	@Autowired
 	private TicketDao ticketDao;
@@ -38,14 +40,18 @@ public class TicketController {
 	@Autowired
 	private TestCaseDao testCaseDao;
 	
+	/*Index variable to control which position will be accessed in the List<>*/
+	private Integer i;
+	
 	/** Map the ticketsList URL on GET method.
 	 * Receive as the parameters from the previous page: release project, release tag and and
 	 * id release. These parameters are received to properly show to the user that they are
 	 * accessing the correct page. */
 	@RequestMapping(value = "/ticketsList", method = RequestMethod.GET)
 	public ModelAndView initTicketPage(@RequestParam("project") String project,
-			@RequestParam("tag") String tag, @RequestParam("id_release") Integer id_release,
-			ModelMap model) {
+				@RequestParam("tag") String tag, 
+				@RequestParam("id_release") Integer id_release,
+				ModelMap model) {
 		
 		/* As the pages redirects itself after editing any information, these conditions
 		 * below test if the attribute hasn`t been setted to the model yet. If they hasn`t, 
@@ -71,33 +77,157 @@ public class TicketController {
 		model.addAttribute("ticket", new Ticket());		
 		
 		List<Ticket> ticketList = ticketDao.findAllByReleaseId(id_release);
-	
+
+			
 		/* Return new view using the list on the tickets.page */
 		return new ModelAndView("tickets", "ticketList", ticketList);
 	}	
 	
+	//Controller to support selection of required row on page startTest
+	@RequestMapping(value = "/startTestsSelected", method = RequestMethod.GET)
+	public ModelAndView startTestsSelected(@RequestParam(value = "id_ticket", required = false) Long id_ticket,
+			@RequestParam(value = "id_testcase", required = false) Long id_testcase,
+			@RequestParam(value = "status", required = false) String status,
+			@RequestParam(value = "pre_requisite", required = false) String pre_requisite,
+			@RequestParam(value = "testcase_description", required = false) String testcase_description, 
+			@RequestParam(value = "results", required = false) String results,
+			@RequestParam(value = "id_task", required = false) Long id_task,
+			
+			@ModelAttribute("testCase") TestCases testCase,
+			ModelMap model){
+			
+		model.addAttribute("current_task", id_task);
+		model.addAttribute("id_testcase", id_testcase);
+		model.addAttribute("id_ticket", id_ticket);
+		model.addAttribute("status", status);
+		model.addAttribute("pre_requisite", pre_requisite);
+		model.addAttribute("testcase_description", testcase_description);
+		model.addAttribute("results", results);
+		
+		
+		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
+		
+		return new ModelAndView("startTests", "testCasesList", testCasesList);
+	}
 	
+	//Controller to handle the first access of startTest page(through the ticket page)
 	@RequestMapping(value = "/startTests", method = RequestMethod.GET)
-	public ModelAndView startTests(@RequestParam("description") String description,
-			@ModelAttribute("tag") String tag,
-			@RequestParam("environment") String environment,
-			@RequestParam("developer") String developer,
-			@RequestParam("tester") String tester, 
-			@RequestParam("id_ticket") Long id_ticket,
-			@RequestParam("run_time") String run_time,
+	public String startTests(
+			@RequestParam(value = "id_ticket", required = false) Long id_ticket,
+			@RequestParam(value = "id_testcase", required = false) Long id_testcase,
+			@RequestParam(value = "status", required = false) String status,
+			@RequestParam(value = "pre_requisite", required = false) String pre_requisite,
+			@RequestParam(value = "testcase_description", required = false) String testcase_description, 
+			@RequestParam(value = "results", required = false) String results,
+			@RequestParam(value = "id_task", required = false) Long id_task,
+			
 			@ModelAttribute("testCase") TestCases testCase,
 			ModelMap model) {
 		
-		/* Set a new TestCases object every time the URL its called */
-		model.addAttribute("testCase", new TestCases());		
+		/*Variable to control which is the next TastCase */
+		TestCases nextTc = null;
+		System.out.println("GET");
 		
+		/* Set a new TestCases object every time the URL its called */
+		if(!model.containsAttribute("testCase")){
+			model.addAttribute("testCase", new TestCases());		
+		}
 		/* Set a new Ticket object every time the URL its called
 		 * This is used to edit the Run_time field */
-		model.addAttribute("ticket", new Ticket());	
+		if(!model.containsAttribute("ticket")){
+			model.addAttribute("ticket", new Ticket());	
+		}
+				
+		System.out.println("id_task: "+ id_task +"Id_testcase: " + id_testcase + ",status: " + status+ ",id_testcase: " + id_testcase);
 		
-		System.out.println("PASSOU");
+		model.addAttribute("id_testcase", id_testcase);
+		model.addAttribute("id_ticket", id_ticket);
+		model.addAttribute("status", status);
+		model.addAttribute("pre_requisite", pre_requisite);
+		model.addAttribute("testcase_description", testcase_description);
+		model.addAttribute("results", results);
+				
+		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
+		
+		//Take the first record of the list to start the startTest page.
+		nextTc = testCasesList.get(0);
+		
+		model.addAttribute("current_task", nextTc.getTask_id());
+		model.addAttribute("testCasesList", testCasesList);
+		
+		/*Avoid infinite redirect loop when calling this controller,
+		 * by checking if any value get from the URL is null, this way the redirection
+		 * will be executed only once*/
+		if(id_testcase == null){
+			return "redirect:startTests?id_testcase="+nextTc.getTestcase_id()+"&id_ticket="
+					+nextTc.getId_ticket()+"&status="+nextTc.getStatus()+
+					"&pre_requisite="+nextTc.getPre_requisite()+"&testcase_description="
+					+nextTc.getTestcase_description()+"&results="+nextTc.getResults();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/startTestsP", method = RequestMethod.POST)
+	public ModelAndView addStartTests(@RequestBody
+			@RequestParam String action,
+			@ModelAttribute("comments") String comments,
+			@ModelAttribute("status") String newStatus,
+			@ModelAttribute("id_ticket") Long id_ticket,
+			@ModelAttribute("id_testcase") Long id_testcase,
+			@ModelAttribute("testCase") TestCases testCase,
+			ModelMap model) {
+		
+		System.out.println("POST: id_testcase: " + id_testcase + " Status: " + newStatus);
+		
+		/*Variable to control which is the next TastCase */
+		TestCases nextTc = null;
+		
+		/* Set a new TestCases object every time the URL its called */
+		if(!model.containsAttribute("testCase")){
+			model.addAttribute("testCase", new TestCases());		
+		}
+		/* Set a new Ticket object every time the URL its called
+		 * This is used to edit the Run_time field */
+		if(!model.containsAttribute("ticket")){
+			model.addAttribute("ticket", new Ticket());	
+		}
+		
+		/*Recognise which button was clicked (passed or failed)
+		 *through the (name="action") parameter on <button> tag int the starTest.jsp page
+		 *Here in the controller the (@RequestParam String action) bind this information*/
+		if(action.equals("passed") ){
+		     System.out.println("passed");
+		     testCaseDao.updateTwoColumnValue(id_testcase, "status", "Passed", "comments", comments);
+	    }
+	    else if(action.equals("failed")){
+	    	System.out.println("failed");
+	    	testCaseDao.updateTwoColumnValue(id_testcase, "status", "Failed", "comments", comments);
+	    }
 		
 		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
+		//Get index from testCases being manage at the moment
+		for(TestCases tc : testCasesList){
+			if(tc.getTestcase_id() == id_testcase){
+				i = testCasesList.indexOf(tc);
+				System.out.println("Index: " + i);
+			}
+		}
+		
+		//Take the next TestCase and return it
+		//cath handle indexOutOfBound exception, and reset the "cursor" of the table
+		try {
+			nextTc = testCasesList.get(i+1);
+		} catch (Exception e) {
+			nextTc = testCasesList.get(0);
+		}
+		
+		model.addAttribute("current_task", nextTc.getTask_id());
+		model.addAttribute("id_testcase", nextTc.getTestcase_id());
+		model.addAttribute("id_ticket", nextTc.getId_ticket());
+		model.addAttribute("status", nextTc.getStatus());
+		model.addAttribute("pre_requisite", nextTc.getPre_requisite());
+		model.addAttribute("testcase_description", nextTc.getTestcase_description());
+		model.addAttribute("results", nextTc.getResults());
 		
 		return new ModelAndView("startTests", "testCasesList", testCasesList);
 	}
