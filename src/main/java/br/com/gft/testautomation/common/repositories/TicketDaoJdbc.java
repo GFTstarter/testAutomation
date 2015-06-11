@@ -94,11 +94,23 @@ public class TicketDaoJdbc implements TicketDao{
 			public Ticket mapRow(ResultSet rs, int rowNum) throws SQLException {
 				
 				Ticket aTicket = new Ticket();
+				String descriptionFix = rs.getString("description");
 				
 				aTicket.setId_ticket(rs.getLong("id_ticket"));
 				aTicket.setId_release(rs.getLong("id_release"));
 				aTicket.setJira(rs.getString("jira"));
-				aTicket.setDescription(rs.getString("description"));
+				
+				/*Verify if there is '%' or/and '&' on Tickets description, because these character can't be passed through the URL*/
+				if(rs.getString("description").contains("%")){
+					System.out.println("Antes: " + rs.getString("description") );
+					descriptionFix = rs.getString("description").replace("%", "(percent)");						
+					System.out.println("Depois: " + rs.getString("description").replace("%", "(percent)"));
+				}
+				if(rs.getString("description").contains("&")){
+					descriptionFix = descriptionFix.replace("&", "(ampersand)");
+				}
+				
+				aTicket.setDescription(descriptionFix);	
 				aTicket.setEnvironment(rs.getString("environment"));
 				aTicket.setDeveloper(rs.getString("developer"));
 				aTicket.setTester(rs.getString("tester"));

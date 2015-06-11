@@ -92,7 +92,7 @@ public class TicketController {
 			@RequestParam(value = "testcase_description", required = false) String testcase_description, 
 			@RequestParam(value = "results", required = false) String results,
 			@RequestParam(value = "id_task", required = false) Long id_task,
-			
+			@RequestParam(value = "comments", required = false) String comments,
 			@ModelAttribute("testCase") TestCases testCase,
 			ModelMap model){
 			
@@ -103,7 +103,7 @@ public class TicketController {
 		model.addAttribute("pre_requisite", pre_requisite);
 		model.addAttribute("testcase_description", testcase_description);
 		model.addAttribute("results", results);
-		
+		model.addAttribute("comments", comments);
 		
 		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
 		
@@ -120,6 +120,8 @@ public class TicketController {
 			@RequestParam(value = "testcase_description", required = false) String testcase_description, 
 			@RequestParam(value = "results", required = false) String results,
 			@RequestParam(value = "id_task", required = false) Long id_task,
+			@RequestParam(value = "comments", required = false) String comments,
+			@RequestParam(value = "id_release", required = false) String id_release,
 			
 			@ModelAttribute("testCase") TestCases testCase,
 			ModelMap model) {
@@ -138,7 +140,7 @@ public class TicketController {
 			model.addAttribute("ticket", new Ticket());	
 		}
 				
-		System.out.println("id_task: "+ id_task +"Id_testcase: " + id_testcase + ",status: " + status+ ",id_testcase: " + id_testcase);
+		System.out.println("IdRelease: "+id_release+" id_task: "+ id_task +"Id_testcase: " + id_testcase + ",status: " + status+ ",id_testcase: " + id_testcase);
 		
 		model.addAttribute("id_testcase", id_testcase);
 		model.addAttribute("id_ticket", id_ticket);
@@ -146,12 +148,21 @@ public class TicketController {
 		model.addAttribute("pre_requisite", pre_requisite);
 		model.addAttribute("testcase_description", testcase_description);
 		model.addAttribute("results", results);
-				
+		model.addAttribute("comments", comments);
+		
 		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
 		
 		//Take the first record of the list to start the startTest page.
-		nextTc = testCasesList.get(0);
-		
+		try{
+			nextTc = testCasesList.get(0);
+		}
+		catch (Exception e){
+			if(id_release == null){
+				return "redirect:startTests?nmsg=1";
+			}
+			else
+				return null;
+		}
 		model.addAttribute("current_task", nextTc.getTask_id());
 		model.addAttribute("testCasesList", testCasesList);
 		
@@ -162,7 +173,7 @@ public class TicketController {
 			return "redirect:startTests?id_testcase="+nextTc.getTestcase_id()+"&id_ticket="
 					+nextTc.getId_ticket()+"&status="+nextTc.getStatus()+
 					"&pre_requisite="+nextTc.getPre_requisite()+"&testcase_description="
-					+nextTc.getTestcase_description()+"&results="+nextTc.getResults();
+					+nextTc.getTestcase_description()+"&results="+nextTc.getResults()+"&comments="+nextTc.getComments();
 		}
 		return null;
 	}
@@ -228,6 +239,7 @@ public class TicketController {
 		model.addAttribute("pre_requisite", nextTc.getPre_requisite());
 		model.addAttribute("testcase_description", nextTc.getTestcase_description());
 		model.addAttribute("results", nextTc.getResults());
+		model.addAttribute("comments", nextTc.getComments());
 		
 		return new ModelAndView("startTests", "testCasesList", testCasesList);
 	}

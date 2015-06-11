@@ -9,6 +9,15 @@
 	border-bottom: 1px solid #e5e5e5;
 }
 
+.datepicker {
+		z-index: 1151 !important;
+		position: absolute;
+}
+
+.current-task {
+	  background-color: #B4D5F5 !important;
+	}
+		
 .footer {
 	margin-top: 70px;
 	border-top: 1px solid #e5e5e5;

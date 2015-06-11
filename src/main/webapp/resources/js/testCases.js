@@ -1,6 +1,8 @@
 /* Functions to be ready at page load */
 $(document).ready(function() {
 
+	//$('input[@type=search]').val('Test');
+	
 	$('#testCases').dataTable({
 		"scrollY" : "750px",
 		"scrollX" : false,
