@@ -55,6 +55,7 @@
 							<th></th>
 							<th></th>
 							<th></th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -103,6 +104,12 @@
 										</c:otherwise>
 									</c:choose></td>
 		
+								<td>
+								<!-- CONFIGURED BUT NOT WORKING -->
+								<!-- 	<a title="Send Email"
+												href="sendMail?developer=${ticket.developer}&jira=${ticket.jira}"><span
+												class="glyphicon glyphicon-envelope"></span></a>	 -->	
+								</td>
 								<%-- 						<td><c:choose> --%>
 								<%-- 							<c:when test="${ticket.testcase_status == 'Failed'}"> --%>
 								<!-- 								<a title="Click to delete" -->

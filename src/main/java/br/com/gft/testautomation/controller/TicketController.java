@@ -2,7 +2,11 @@ package br.com.gft.testautomation.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,7 +34,9 @@ import br.com.gft.testautomation.common.repositories.TicketDao;
  * release project, release tag and release id. */
 @SessionAttributes({"project", "tag", "id_release"})
 public class TicketController {
-
+	
+	@Autowired
+	private JavaMailSender mailSender;
 	
 	/* Autowires the TicketDaoImpl bean */
 	@Autowired
@@ -42,6 +48,31 @@ public class TicketController {
 	
 	/*Index variable to control which position will be accessed in the List<>*/
 	private Integer i;
+	
+	@RequestMapping(value = "/sendMail",method = RequestMethod.GET)
+    public String doSendEmail(@RequestParam("developer") String developer, 
+    		@RequestParam("jira") String jira) {
+		
+        // takes input from e-mail form
+        String recipientAddress = "Luan.de-Souza@gft.com";
+        String subject = "Email test";
+        String message = "Email teste, Develelper: " + developer + ", JIRA: " + jira;
+         
+        System.out.println("Message: " + message);
+        
+        // creates a simple e-mail object
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message);
+         
+        // sends the e-mail
+        mailSender.send(email);
+         
+        // forwards to the view named "tickets"
+        return "tickets";
+    }
+	
 	
 	/** Map the ticketsList URL on GET method.
 	 * Receive as the parameters from the previous page: release project, release tag and and
@@ -140,7 +171,7 @@ public class TicketController {
 			model.addAttribute("ticket", new Ticket());	
 		}
 				
-		System.out.println("IdRelease: "+id_release+" id_task: "+ id_task +"Id_testcase: " + id_testcase + ",status: " + status+ ",id_testcase: " + id_testcase);
+		System.out.println("IdRelease: "+id_release+" - id_task: "+ id_task +" - Id_testcase: " + id_testcase + " - status: " + status+ " - id_testcase: " + id_testcase);
 		
 		model.addAttribute("id_testcase", id_testcase);
 		model.addAttribute("id_ticket", id_ticket);
@@ -157,6 +188,8 @@ public class TicketController {
 			nextTc = testCasesList.get(0);
 		}
 		catch (Exception e){
+			//Checks if there is no data to start the page "startTests", if there isn't,
+			//the parameter nmsg will be set to 1
 			if(id_release == null){
 				return "redirect:startTests?nmsg=1";
 			}

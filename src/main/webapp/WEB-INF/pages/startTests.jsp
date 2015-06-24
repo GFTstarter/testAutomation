@@ -21,6 +21,7 @@
 							</tr>
 						</thead>
 						<tbody>
+						<!-- If the current task id matches the taks_id in the at the moment of the loop, it will receive a different colour for the row -->
 							<c:forEach var="testcase" items="${testCasesList}">
 								<c:if test="${current_task == testcase.task_id}">
 									<tr id="task-${testcase.task_id}" class="current-task">

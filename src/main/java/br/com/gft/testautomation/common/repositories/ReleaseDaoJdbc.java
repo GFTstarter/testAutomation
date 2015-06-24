@@ -70,7 +70,7 @@ public class ReleaseDaoJdbc implements ReleaseDao{
 
 
 	@Override
-	public void delete(Long id) {
+	public void delete(Integer id) {
 		String sql = "DELETE FROM releases WHERE id_release = ?";
 		
 		jdbcTemplate.update(sql, id);

@@ -1,7 +1,7 @@
 /* Functions to be ready at page load */
 $(document).ready(function() {
 	
-	$('#table_id').dataTable({
+	$('#table_id').DataTable({
 		stateSave: true,
 		"columns" : [ {
 		"width" : "120px"

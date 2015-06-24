@@ -16,6 +16,7 @@
 				<div class="col-md-6">
 					<a href="#" class="add btn btn-primary" id="newRelease">Add new release</a>
 				</div>
+				
 				<div class="footer"></div>
 		
 				<!-- Validation messages -->
@@ -23,20 +24,24 @@
 					<div class="alert alert-danger" role="alert">All fields must not be empty.</div>
 				</c:if>
 		
+				<div class="alert alert-success" role="alert" id="addReleaseResponse"></div>
+				<div class="alert alert-danger" role="alert" id="deleteReleaseResponse"></div>
 				<!-- Releases table -->
 				<table id="releases" class="table table-hover table-striped">
-					<thead>
+					 <thead>
 						<tr>
 							<th>Project</th>
 							<th>Tag</th>
 							<th>Name</th>
 							<th>Target Date</th>
-							<th></th>
-							<th></th>
-							<th></th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
+					</tbody>
+					<!-- <tbody>
 						<c:forEach var="release" items="${releaseList}">
 							<tr>
 								<td class="project">${release.project}</td>
@@ -60,8 +65,9 @@
 								</a></td>
 							</tr>
 						</c:forEach>
-					</tbody>
+					</tbody> -->
 				</table>
+				<a href="#" class="btn btn-primary" id="refresh">Refresh</a>
 			</div>
 		</div>
 		
@@ -76,8 +82,9 @@
 							</button>
 							<h4 class="modal-title" id="myModalLabel">Add new Release</h4>
 						</div>
-						<form:form method="POST" action="addRelease" commandName="release"
-							cssClass="form-horizontal">
+						<!-- AJAX-> action="${pageContext.request.contextPath}/createRelease.json"  -->
+						<form:form id="createRelease" cssClass="form-horizontal"
+						action="${pageContext.request.contextPath}/createRelease.json" commandName="release">
 							<div class="modal-body">
 								<div class="form-group">
 									<label for="inputProject" class="col-sm-2 control-label">Project</label>
@@ -132,7 +139,7 @@
 							</button>
 							<h4 class="modal-title" id="myModalLabel">Edit release</h4>
 						</div>
-						<form:form method="POST" action="editRelease" commandName="release"
+						<form:form id="editRelease" method="POST" action="${pageContext.request.contextPath}/editReleaseAjax.json" commandName="release"
 							cssClass="form-horizontal">
 							<div class="modal-body">
 								<div class="form-group">
@@ -184,9 +191,10 @@
 							<h4 class="modal-title" id="myModalLabel">Information!</h4>
 						</div>
 						<div class="modal-body">Do you want to remove this record?</div>
-						<form:form method="POST" action="deleteRelease" commandName="release" cssClass="form-horizontal">
+						
+						<form:form id="deleteRelease" method="POST" action="${pageContext.request.contextPath}/deleteReleaseAjax.json" commandName="release" cssClass="form-horizontal">
 							<div class="modal-footer">
-								<input type="hidden" name="delete_id_release" id="delete_id_release" value="${id_release}" />
+								<form:input type="hidden" name="delete_id_release" id="delete_id_release" value="" path="id_release"/>
 								<button type="submit" class="btn btn-danger">Confirm</button>
 								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>

@@ -1,9 +1,10 @@
 /* Functions to be ready at page load */
 $(document).ready(function() {
 
+	//TODO: Selector to add class "form-control input-sm" on search input
 	//$('input[@type=search]').val('Test');
 	
-	$('#testCases').dataTable({
+	$('#testCases').DataTable({
 		"scrollY" : "750px",
 		"scrollX" : false,
 		"scrollCollapse" : true,

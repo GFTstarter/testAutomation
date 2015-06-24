@@ -30,7 +30,7 @@
 		<div class="navbar-collapse collapse">
 			<div id="navbarlabel" class="navbar navbar-right">
 				<img id="navbarimg"
-					src="<c:url value="/resources/css/images/GFT_Logo_RGB_200pixel.png"/>" />
+					src="<c:url value="/resources/images/GFT_Logo_RGB_200pixel.png"/>" />
 			</div>
 			<form action="<c:url value='j_spring_security_logout'/>"
 				method="POST" id="btnLogout" class="navbar-form navbar-right">

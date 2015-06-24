@@ -3,22 +3,30 @@
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+
 import br.com.gft.testautomation.common.login.LoginUtils;
 import br.com.gft.testautomation.common.model.Release;
+import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.ReleaseDao;
+import br.com.gft.testautomation.common.repositories.TicketDao;
 import br.com.gft.testautomation.common.validator.ReleaseValidator;
 
 
@@ -35,6 +43,10 @@ public class ReleaseController{
 	/* Autowires the ReleaseDaoImpl bean */
 	@Autowired
 	private ReleaseDao releaseDao;
+	
+	/* Autowires the TicketDaoImpl bean */
+	@Autowired
+	private TicketDao ticketDao;
 	
 	/* Creates a instance of ReleaseValidator class */
 	ReleaseValidator releaseValidator;
@@ -63,12 +75,24 @@ public class ReleaseController{
 	    names = LoginUtils.splitEmail(name);
 	    model.addAttribute("user", names[1] + ", " + names[0]);
 		
-		/* Creates a list using the findAll method of the mongo template bean */
+		/* Creates a list using the findAll method of the releaseDao bean */
 	    List<Release> releaseList = releaseDao.findAll();
 		
 		/* Return new view using the list on the releases.jsp page */
 		return new ModelAndView("releases", "releaseList", releaseList);
-	}		
+	}	
+	
+	//AJAX
+	@RequestMapping(value="/getListAjax", method=RequestMethod.GET,
+            		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getReleaseList() {
+		
+		List<Release> data = releaseDao.findAll();
+		String jsonData = new Gson().toJson(data);
+		System.out.println("Json: " + jsonData);
+        return jsonData;
+    }
 	
 	/** Map the URL addRelease on POST method. 
 	 * Receives the Release object from the form on the modal, and a BindingResult object
@@ -96,6 +120,18 @@ public class ReleaseController{
 		}				
 	}
 	
+	//AJAX
+	@RequestMapping(value="/createRelease", method=RequestMethod.POST, 
+            		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Release addRelease(@RequestBody Release release) {
+		System.out.println("Project: " + release.getName() + ", Tag: " +
+				release.getTag() + ", Target_Date: " + release.getTarget_date());
+		releaseDao.saveOrUpdate(release);
+		
+		return release;
+    }
+	
 	/** Map the URL editRelease, that comes from a modal, on the POST method.
 	 * Receives the necessary parameters to update the Release of that row. */
 	@RequestMapping(value = "/editRelease", method = RequestMethod.POST)
@@ -117,11 +153,44 @@ public class ReleaseController{
 		}		
 	}
 	
+	//AJAX
+	@RequestMapping(value="/editReleaseAjax", method=RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Release editReleaseAjax(@RequestBody Release release) {
+		System.out.println("UPDATED - Project: " + release.getName() + ", Tag: " +
+				release.getTag() + ", Target_Date: " + release.getTarget_date());
+		releaseDao.saveOrUpdate(release);
+
+		return release;
+	}
+	
+	
+	
 	@RequestMapping(value = "/deleteRelease", method = RequestMethod.POST)
-	public String deleteRelease(@RequestParam("delete_id_release") Long id){
+	public String deleteRelease(@RequestParam("delete_id_release") Integer id){
 		
 		releaseDao.delete(id);
 		
 		return "redirect:getList";
 	}
+	
+	//AJAX
+	@RequestMapping(value="/deleteReleaseAjax", method=RequestMethod.POST, 
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String deleteReleaseAjax(@RequestBody Integer id) {
+		System.out.println("ID: " + id);
+		Integer status = 1;
+		List<Ticket> listTicket = ticketDao.findAllByReleaseId(id);
+		
+		//Check if the release has tickets assigned to it, if so it can not be deleted
+		if(listTicket.size() > 0){
+			status = 0;
+		}
+		else
+			releaseDao.delete(id);
+		
+        return "{\"status\":"+status+"}";
+    }
 }

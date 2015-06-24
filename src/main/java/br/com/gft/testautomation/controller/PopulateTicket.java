@@ -48,9 +48,12 @@ public class PopulateTicket {
 				System.out.println("Tester: " + customfields.get(j).getCustomfieldvalues().getCustomfieldvalue().getValue());
 				ticket.setTester(customfields.get(j).getCustomfieldvalues().getCustomfieldvalue().getValue());
 			}
-			
 		}
 
+		//System.out.println("IMPORT: Jira: " + ticket.getJira() + " - Description: " + ticket.getEnvironment()
+		//		+ " - Status: " + ticket.getStatus() + " - id_Release: " + ticket.getId_ticket());
+		
+		
 		//Verify if XML that is being read has register of developer and tester
 		//If not, is needed to set empty, because these filed are not null and will raise exception
 		if(ticket.getDeveloper() == null){

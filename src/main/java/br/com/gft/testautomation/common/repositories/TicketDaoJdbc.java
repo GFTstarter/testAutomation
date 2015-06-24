@@ -31,8 +31,9 @@ public class TicketDaoJdbc implements TicketDao{
 			//update
 			String sql = "UPDATE tickets SET tester = ?, developer = ?, status = ? WHERE id_ticket = ?";
 			
-			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Tester = " + 
-			ticket.getTester() + ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
+			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Enviroment = " + 
+			ticket.getEnvironment() + ", Tester = " + ticket.getTester() 
+			+ ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
 			
 			jdbcTemplate.update(sql, ticket.getTester(), ticket.getDeveloper(), ticket.getStatus(), ticket.getId_ticket());
 		}
@@ -44,6 +45,10 @@ public class TicketDaoJdbc implements TicketDao{
 			jdbcTemplate.update(sql, ticket.getId_release(), ticket.getJira(), ticket.getDescription(), 
 					ticket.getEnvironment(), ticket.getDeveloper(), ticket.getTester(), ticket.getStatus(), 
 					ticket.getRun_time(), ticket.getTestcase_status());
+			
+			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Enviroment = " + 
+			ticket.getEnvironment() + ", Tester = " + ticket.getTester() 
+			+ ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
 		}
 		
 	}
@@ -82,7 +87,6 @@ public class TicketDaoJdbc implements TicketDao{
 			}
 		});
 	}
-
 	
 	@Override
 	public List<Ticket> findAllByReleaseId(Integer id) {
@@ -100,14 +104,15 @@ public class TicketDaoJdbc implements TicketDao{
 				aTicket.setId_release(rs.getLong("id_release"));
 				aTicket.setJira(rs.getString("jira"));
 				
-				/*Verify if there is '%' or/and '&' on Tickets description, because these character can't be passed through the URL*/
+				/*Verify if there is '%' or/and '&' or/and '"' on Tickets description, because these character can't be passed through the URL*/
 				if(rs.getString("description").contains("%")){
-					System.out.println("Antes: " + rs.getString("description") );
 					descriptionFix = rs.getString("description").replace("%", "(percent)");						
-					System.out.println("Depois: " + rs.getString("description").replace("%", "(percent)"));
 				}
 				if(rs.getString("description").contains("&")){
 					descriptionFix = descriptionFix.replace("&", "(ampersand)");
+				}
+				if(rs.getString("description").contains("\"")){
+					descriptionFix = descriptionFix.replace("\"", "'");
 				}
 				
 				aTicket.setDescription(descriptionFix);	
@@ -121,7 +126,6 @@ public class TicketDaoJdbc implements TicketDao{
 				return aTicket;
 			}
 		});
-		
 		return listTickets;
 	}
 

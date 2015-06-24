@@ -11,6 +11,10 @@
    		<put-list-attribute name="cssList" cascade="true">
         	<add-attribute value="/resources/css/style.css"/>
         	<add-attribute value="/resources/css/bootstrap.min.css"/>
+        	
+        	<add-attribute value="/resources/css/jquery.dataTables.css"/>
+        	<add-attribute value="/resources/css/jquery.dataTables.min.css"/>
+        	<add-attribute value="/resources/css/jquery.dataTables_themeroller.css"/>
         </put-list-attribute>
         <put-list-attribute name="jsList" cascade="true">
         	<add-attribute value="/resources/js/jquery-1.11.1.min.js"/>
@@ -24,10 +28,10 @@
         </put-list-attribute>
     </definition>
     
-    <!-- TODO: COMPLETE DEFINITIONS FOR OTHER PAGES  -->
-     <definition name="releaseTemplate" extends="defaultTemplate">
+    <definition name="releaseTemplate" extends="defaultTemplate">
 		<put-list-attribute name="jsList" cascade="true"  inherit="true">
         	<add-attribute value="/resources/js/bootstrap-datepicker.js"/>
+        	<add-attribute value="/resources/js/jquery.dataTables.min.js"/>
         	<add-attribute value="/resources/js/release.js"/>
         </put-list-attribute>
         <put-list-attribute name="cssList" cascade="true" inherit="true">
@@ -38,34 +42,28 @@
      <definition name="ticketTemplate" extends="defaultTemplate">
 		<put-list-attribute name="jsList" cascade="true"  inherit="true">
         	<add-attribute value="/resources/js/releaseTickets.js"/>
- 			<add-attribute value="/resources/js/dataTables.bootstrap.js"/>       
         	<add-attribute value="/resources/js/jquery.dataTables.min.js"/>
         </put-list-attribute>
         <put-list-attribute name="cssList" cascade="true" inherit="true">
-        	<add-attribute value="/resources/css/dataTables.bootstrap.css"/>
         </put-list-attribute>
     </definition>
     
     <definition name="testCaseTemplate" extends="defaultTemplate">
 		<put-list-attribute name="jsList" cascade="true"  inherit="true">
         	<add-attribute value="/resources/js/bootstrap-datepicker.js"/>
- 			<add-attribute value="/resources/js/dataTables.bootstrap.js"/>       
         	<add-attribute value="/resources/js/jquery.dataTables.min.js"/>
         	<add-attribute value="/resources/js/testCases.js"/>
         </put-list-attribute>
         <put-list-attribute name="cssList" cascade="true" inherit="true">
-        	<add-attribute value="/resources/css/dataTables.bootstrap.css"/>
         	<add-attribute value="/resources/css/datepicker3.css"/>
         </put-list-attribute>
     </definition>
     
     <definition name="startTestsTemplate" extends="defaultTemplate">
 		<put-list-attribute name="jsList" cascade="true"  inherit="true">
-        	<add-attribute value="/resources/js/dataTables.bootstrap.js"/>
         	<add-attribute value="/resources/js/startTests.js"/>
         </put-list-attribute>
         <put-list-attribute name="cssList" cascade="true" inherit="true">
-        	<add-attribute value="/resources/css/dataTables.bootstrap.css"/>
         </put-list-attribute>
     </definition>
     
