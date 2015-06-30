@@ -30,11 +30,11 @@ import br.com.gft.testautomation.common.repositories.TicketDao;
 @Controller
 /** Put on the Session (and later uses it), if not exists, the attributes: 
  * release tag and release id. */
-@SessionAttributes({"tag", "id_release"})
+@SessionAttributes({"tag", "id_release", "parameter"})
 public class TestCaseController {
 
 	
-	/* Autowires the ReleaseDaoImpl bean */
+	/* Autowires the TestCaseDaoImpl bean */
 	@Autowired
 	TestCaseDao testCaseDao;
 	
@@ -49,11 +49,13 @@ public class TestCaseController {
 	@RequestMapping(value = "/testCases", method = RequestMethod.GET)
 	public ModelAndView initTestCasesPage(@RequestParam("description") String description,
 			@ModelAttribute("tag") String tag,
+			@RequestParam("jira") String jira,
 			@RequestParam("environment") String environment,
 			@RequestParam("developer") String developer,
 			@RequestParam("tester") String tester, 
 			@RequestParam("id_ticket") Long id_ticket,
 			@RequestParam("run_time") String run_time,
+			@RequestParam(value = "status", required =false) String status,
 			
 			@ModelAttribute("testCase") TestCases testCase,
 			
@@ -62,6 +64,9 @@ public class TestCaseController {
 		/* As the pages redirects itself after editing and adding any information, these 
 		 * conditions below test if the attribute hasn`t been setted to the model yet. If 
 		 * they hasn`t, they will be setted. */
+		if(!model.containsAttribute("jira")){
+			model.addAttribute("jira", jira);
+		}
 		if(!model.containsAttribute("description")){
 			model.addAttribute("description", description);
 		}
@@ -79,6 +84,9 @@ public class TestCaseController {
 		}
 		if(!model.containsAttribute("run_time")){
 			model.addAttribute("run_time", run_time);		
+		}
+		if(!model.containsAttribute("status")){
+			model.addAttribute("status", status);
 		}
 		
 		/* Add the logged in user to show on the page */
@@ -111,6 +119,7 @@ public class TestCaseController {
 	@RequestMapping(value = "/testCases", method = RequestMethod.POST)
 	public String addTestCase(@RequestBody @RequestParam("td_description") String description,
 			@ModelAttribute("tag") String tag,
+			@RequestParam("td_jira") String jira,
 			@RequestParam("td_environment") String environment,
 			@RequestParam("td_developer") String developer,
 			@RequestParam("td_tester") String tester, 
@@ -120,7 +129,7 @@ public class TestCaseController {
 		
 		/* If the description is empty (only field that can't be empty), return with a error message */
 		if (testCase.getTestcase_description() == ""){
-			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time+"&msg=true";
+			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time+"&msg=true";
 		}else{
 			/* Insert the new TestCases object into the database using the saveOrUpdate method
 			 * of TestCasesDao. */
@@ -130,7 +139,7 @@ public class TestCaseController {
 			/* Redirect to the TestCases URL on GET method to refresh the page and exhibit on the 
 			 * TestCases list the new object added. Use the received parameters to properly redirect
 			 * the page. */
-			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;	
+			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;	
 		}			
 	}
 
@@ -183,18 +192,34 @@ public class TestCaseController {
 	@RequestMapping(value = "/updateTime", method = RequestMethod.POST)
 	public String updateTime(@ModelAttribute("id_ticket") Long id_ticket,
 			@ModelAttribute("tag") String tag,
-			@ModelAttribute("tb_description") String description,
-			@ModelAttribute("tb_developer") String developer,
-			@ModelAttribute("tb_tester") String tester,
-			@ModelAttribute("tb_environment") String environment,
 			@RequestParam("run_time") String run_time,
 			@ModelAttribute("ticket") Ticket ticket) {
+		
+		System.out.println("Tag: " + tag
+					+ " - Jira: " + ticket.getJira() 
+					+ " - Description: " + ticket.getDescription() 
+					+ " - Environment: " + ticket.getEnvironment() 
+					+ " - Tester: " + ticket.getTester() 
+					+ " - Developer: " + ticket.getDeveloper() 
+					+ " - Run_time: " + ticket.getRun_time()
+					+ " - Status: " + ticket.getStatus());
 		
 		/* Update the time to run all tests*/
 		ticketDao.updateColumnValue(id_ticket, "run_time", run_time);
 		
+		/* Update ticket fields*/
+		ticketDao.saveOrUpdate(ticket);	
+		
 		/* Redirect to the TestCasesController GET URL. */
-		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
+		return "redirect:testCases?id_ticket="+id_ticket
+									+"&tag="+tag
+									+"&jira="+ticket.getJira()
+									+"&description="+ ticket.getDescription()
+									+"&developer="+ticket.getDeveloper()
+									+"&tester="+ticket.getTester()
+									+"&environment="+ticket.getEnvironment()
+									+"&run_time="+ticket.getRun_time()
+									+"&status="+ticket.getStatus();
 	}
 	
 	// Map the resetTestCase on POST method.

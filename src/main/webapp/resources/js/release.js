@@ -4,9 +4,11 @@ $(document).ready(function() {
 	//Variable to store the result from the ajax call
 	var ajaxResp ='';
 	$( "#addReleaseResponse" ).toggle();
-	$( "#deleteReleaseResponse" ).toggle();
+	$( "#opFailReleaseResponse" ).toggle();
 	
-	$('#deleteRelease').submit(function(event) {
+	/*Ajax call to delete a registry from releases table sending the idRelease 
+	 * via the "data:" attribute*/
+	$('#deleteRelease').submit(function(event){
 		
 		var idRelease = $('#delete_id_release').val();
 		console.log("Id - " + idRelease);
@@ -21,27 +23,27 @@ $(document).ready(function() {
 				xhr.setRequestHeader("Content-Type", "application/json");
 			},
 			success: function(d) {
-				//$("#deleteReleaseResponse" ).toggle();
-				//$("#deleteReleaseResponse").html("<b>Release Deleted</b>").delay(5000).fadeOut();
 				$('#deleteModal').modal('hide');
-				if(d.status == 0){
+				if(d.status == 1){
 					console.log("Falha");
-					$("#deleteReleaseResponse" ).toggle();
-					$("#deleteReleaseResponse").html("<b>Can't be deleted. This release has tickets assigned to it</b>").delay(5000).fadeOut()
+					$("#opFailReleaseResponse" ).toggle();
+					$("#opFailReleaseResponse").html("<b>Can not be deleted. This release has tickets assigned to it.</b>").delay(5000).fadeOut()
 				}
 				oTable.ajax.reload();
 			},
-			//error function  to handle return in case the release being deleted has tickets assigned to it (In this case the release can not be deleted)
+			/*NOT BEING USED - error function  to handle return in case the release being 
+			 * deleted has tickets assigned to it (In this case the release can not be deleted)*/
 			error: function(xhr, textStatus, errorThrown){
 				$('#deleteModal').modal('hide');
-				$("#deleteReleaseResponse" ).toggle();
-				$("#deleteReleaseResponse").html("<b>Can't be deleted. This release has tickets assigned to it</b>").delay(5000).fadeOut()
+				$("#opFailReleaseResponse" ).toggle();
+				$("#opFailReleaseResponse").html("<b>Can't be deleted. This release has tickets assigned to it</b>").delay(5000).fadeOut()
 			}
 		});
 		
 		event.preventDefault();
 	});
 	
+	/*Ajax call to insert a new registry in the release table */
 	$('#createRelease').submit(function(event) {
 	       
 		var project = $('#project').val();
@@ -50,7 +52,7 @@ $(document).ready(function() {
 		var target_date = $('#datepicker').val();
   
 		var json = { "project" : project, "tag" : tag, "name": name, "target_date": target_date};
-		console.log('project: ' + project + ' tag: ' + tag + ' name: ' + name + ' target_date: ' + target_date)
+		console.log(JSON.stringify(json));
 	    
 		$.ajax({
 	    	url: $("#createRelease").attr( "action"),
@@ -60,12 +62,14 @@ $(document).ready(function() {
 	            xhr.setRequestHeader("Accept", "text/plain");
 	            xhr.setRequestHeader("Content-Type", "application/json");
 	        },
-	        success: function(data) {
-	            var respContent = "Success!";
-	            console.log('Response: ' + data);
-	          	           
-	            //$( "#addReleaseResponse" ).toggle();
-	            //$("#addReleaseResponse").html("<b>Release Added</b>").delay(5000).fadeOut();
+	        success: function(d) {
+	            console.log('Response: ' + d.status);
+	            
+	            if(d.status == 1){
+					console.log("Falha");
+					$("#opFailReleaseResponse" ).toggle();
+					$("#opFailReleaseResponse").html("<b>All filed must not be empty.</b>").delay(5000).fadeOut()
+				}           
 	            $('#addModal').modal('hide');
 	            
 	    		console.log('Table: ' + oTable);
@@ -73,10 +77,11 @@ $(document).ready(function() {
 	    		//oTable.ajax.reload( null, false );
 	    		oTable.ajax.reload();
 	        }
-	    });
-		event.preventDefault();
-	});
+		    });
+			event.preventDefault();
+		});
 	
+	/*Ajax call to edit a registry*/
 	$('#editRelease').submit(function(event) {
 	       
 		var id_release = $('#edit_id_release').val();
@@ -96,12 +101,14 @@ $(document).ready(function() {
 	            xhr.setRequestHeader("Accept", "text/plain");
 	            xhr.setRequestHeader("Content-Type", "application/json");
 	        },
-	        success: function(data) {
-	            var respContent = "Success!";
-	            console.log('Response: ' + data);
+	        success: function(d) {
+	        	
+	        	 if(d.status == 1){
+						console.log("Falha");
+						$("#opFailReleaseResponse" ).toggle();
+						$("#opFailReleaseResponse").html("<b>All fields must not be empty.</b>").delay(5000).fadeOut()
+					}    
 	          	           
-	            //$( "#addReleaseResponse" ).toggle();
-	            //$("#addReleaseResponse").html("<b>Release Added</b>").delay(5000).fadeOut();
 	            $('#editModal').modal('hide');
 	            
 	    		//oTable.ajax.reload( null, false );
@@ -111,7 +118,7 @@ $(document).ready(function() {
 		event.preventDefault();
 	});
 	
-	$('#releases-NOTUSING tbody').not("a.edit a.delete tbody").on('click', 'tr', function () {
+	$('#releases-NOT-BEING-USED tbody').not("a.edit a.delete tbody").on('click', 'tr', function () {
 		$('#editModal').modal('show');
 
 		console.log(oTable.row(this).data().id_release);
@@ -128,14 +135,7 @@ $(document).ready(function() {
 		$(".modal-body #edit_target_date").val(target_date);
 	});
 	
-/*	$('#releases tbody').on( 'click', ' $("span").parent', function(event) {
-		console.log("This: " + this);
-		console.log("oTable: " + oTable.row(this).data());
-	    event.preventDefault();
-	});*/
-	
-	
-	//oTable setted as global
+	//oTable created as global
 	oTable = $('#releases').DataTable({
 		
 		stateSave: true,
@@ -190,10 +190,7 @@ $(document).ready(function() {
 	$('#addModal').modal('show');
 });
  
-//TRY TO SELECT THE DATA AS BEFORE
- 
-//ALTERNATIVE METHOD - NOT WORKING - NEED TO DYNAMICALLY SET ROW() PARAMTER  
-$(document).on('click', 'a.edit', function() {
+$(document).on('click', 'a.edit', function(){
 	$('#editModal').modal('show');
 	
 	var id_release = $(this).data('id');
@@ -209,28 +206,8 @@ $(document).on('click', 'a.edit', function() {
 	$(".modal-body #edit_target_date").val(target_date);
 });
 
- 
-/* Function to open "Edit Release" modal on click 
-$(document).on('click', 'a.edit', function() {
-	$('#editModal').modal('show');
-	
-	var id_release = $(this).data('id');
-	var project = $(this).closest('tr').find('td.project').html();
-	var tag = $(this).closest('tr').find('td.tag').html();
-	var name = $(this).closest('tr').find('td.name').html();
-	var target_date = $(this).closest('tr').find('td.target_date')
-				.html();
-
-	$(".modal-body #edit_id_release").val(id_release);
-	$(".modal-body #edit_project").val(project);
-	$(".modal-body #edit_tag").val(tag);
-	$(".modal-body #edit_name").val(name);
-	$(".modal-body #edit_target_date").val(target_date);
-});*/
-
 /* Function to "Delete Release" modal on click */
-$(document).on('click', 'a.delete', function() {  
-	$('#editModal').modal('hide');
+$(document).on('click', 'a.delete', function(){  
 	$('#deleteModal').modal('show');
 	
 	var id_release = $(this).data('id');

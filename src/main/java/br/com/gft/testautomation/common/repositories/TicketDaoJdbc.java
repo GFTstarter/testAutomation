@@ -29,15 +29,27 @@ public class TicketDaoJdbc implements TicketDao{
 	public void saveOrUpdate(Ticket ticket) {
 		if(ticket.getId_ticket() != 0){
 			//update
-			String sql = "UPDATE tickets SET tester = ?, developer = ?, status = ? WHERE id_ticket = ?";
+			String sql = "UPDATE tickets SET jira = ?, description = ?, environment = ?, tester = ?, developer = ?, status = ? WHERE id_ticket = ?";
 			
-			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Enviroment = " + 
-			ticket.getEnvironment() + ", Tester = " + ticket.getTester() 
-			+ ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
+			System.out.println("IdTicket = " + ticket.getId_ticket() 
+						+ " - Jira = " + ticket.getJira()
+						+ " - Description = " + ticket.getDescription() 
+						+ " - Enviroment = " + ticket.getEnvironment() 
+						+ " - Tester = " + ticket.getTester() 
+						+ " - Developer = " + ticket.getDeveloper() 
+						+ " - Status = " + ticket.getStatus());
 			
-			jdbcTemplate.update(sql, ticket.getTester(), ticket.getDeveloper(), ticket.getStatus(), ticket.getId_ticket());
+			jdbcTemplate.update(sql, ticket.getJira(), ticket.getDescription(), ticket.getEnvironment(), ticket.getTester(), ticket.getDeveloper(), ticket.getStatus(), ticket.getId_ticket());
 		}
 		else{
+			System.out.println("IdTicket = " + ticket.getId_ticket() 
+					+ " - Jira = " + ticket.getJira()
+					+ " - Description = " + ticket.getDescription() 
+					+ " - Enviroment = " + ticket.getEnvironment() 
+					+ " - Tester = " + ticket.getTester() 
+					+ " - Developer = " + ticket.getDeveloper() 
+					+ " - Status = " + ticket.getStatus());
+			
 			//insert
 			String sql = "INSERT INTO tickets (id_ticket, id_release, jira, description, environment, developer,"
 						+ " tester, status, run_time, testcase_status) VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -46,11 +58,7 @@ public class TicketDaoJdbc implements TicketDao{
 					ticket.getEnvironment(), ticket.getDeveloper(), ticket.getTester(), ticket.getStatus(), 
 					ticket.getRun_time(), ticket.getTestcase_status());
 			
-			System.out.println("IdTicket = " + ticket.getId_ticket() + ", Enviroment = " + 
-			ticket.getEnvironment() + ", Tester = " + ticket.getTester() 
-			+ ", Developer = " + ticket.getDeveloper() + ", Status = " + ticket.getStatus());
 		}
-		
 	}
 
 	/*Return ticket register by the jira specified, the query is set directly to 

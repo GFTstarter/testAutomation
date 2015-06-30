@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+
 import br.com.gft.testautomation.common.model.Rss;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.TicketDao;
@@ -53,6 +55,8 @@ public class PopulateTicket {
 		//System.out.println("IMPORT: Jira: " + ticket.getJira() + " - Description: " + ticket.getEnvironment()
 		//		+ " - Status: " + ticket.getStatus() + " - id_Release: " + ticket.getId_ticket());
 		
+		String jsonData = new Gson().toJson(ticket, Ticket.class);
+		System.out.println("Json: " + jsonData);
 		
 		//Verify if XML that is being read has register of developer and tester
 		//If not, is needed to set empty, because these filed are not null and will raise exception

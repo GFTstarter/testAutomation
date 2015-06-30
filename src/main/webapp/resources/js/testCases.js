@@ -31,7 +31,7 @@ $(document).ready(function() {
 	});
     
 	// Initialize your table
-    var oTable = $('#testCases').dataTable();
+    var oTable = $('#testCases').DataTable();
     
     // Get the length
     var rows = oTable.fnGetData().length;
@@ -40,6 +40,7 @@ $(document).ready(function() {
 	var id = document.getElementById('task_id');
 	id.value = rows + 1;
 });
+
 
 /* Function to open "Edit Test Case" modal on click */
 $(document).on('click', 'a.edit', function() {
@@ -65,14 +66,17 @@ $(document).on('click', 'a.edit', function() {
 });
 
 /* Function to open "Edit Time to run all tests" modal on click */
-$(document).on('click', 'a.time', function() {
+$(document).on('click', 'a.editHeader', function() {
 	$('#modalTime').modal('show');
 
 	var id_ticket = $(this).data('id');
 	var runTime = $(this).closest('tr').find('td.lastLine.time').html();
-
+	//Uses hidden input in the modal as reference to preset status value on the edit modal
+	var status = $('input#status').val();
+	
 	$(".modal-body #id_ticket").val(id_ticket);
 	$(".modal-body #run_time").val(runTime);
+	$(".modal-body #ticketStatus").val(status);
 });
 
 /* Function to open "Reset tests" modal on click */
@@ -84,14 +88,14 @@ $(document).on('click', 'a.reset', function() {
 	$(".modal-footer #reset_testcase_id").val(id_ticket);
 });
 
-/* Function to open "Play tests" modal on click */
-$(document).on('click', 'a.play', function() {
+/* NOT BEING USED - Function to open "Play tests" modal on click */
+/*$(document).on('click', 'a.play', function() {
 	$('#playModal').modal('show');
 
 	var id_ticket = $(this).data('id');
 
 	$(".modal-footer #play_testcase_id").val(id_ticket);
-});
+});*/
 
 /* Function to "Delete Ticket" modal on click */
 $(document).on('click', 'a.delete', function() {

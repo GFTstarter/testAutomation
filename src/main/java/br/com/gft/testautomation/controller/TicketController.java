@@ -2,29 +2,33 @@ package br.com.gft.testautomation.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.google.gson.Gson;
 
 import br.com.gft.testautomation.common.login.LoginUtils;
 import br.com.gft.testautomation.common.model.TestCases;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.TestCaseDao;
 import br.com.gft.testautomation.common.repositories.TicketDao;
+import br.com.gft.testautomation.common.validator.TicketValidator;
 
 /** Controller responsible for the tickets.jsp and the URLs ticketsList and updateTicket.
  * This controller displays the ticket list and controls the edit ticket function
@@ -32,7 +36,7 @@ import br.com.gft.testautomation.common.repositories.TicketDao;
 @Controller
 /** Put on the Session (and later uses it), if not exists, the attributes: 
  * release project, release tag and release id. */
-@SessionAttributes({"project", "tag", "id_release"})
+@SessionAttributes({"project", "tag", "id_release", "parameter"})
 public class TicketController {
 	
 	@Autowired
@@ -45,6 +49,15 @@ public class TicketController {
 	/*Autowires the TestCasesDaoImpl bean*/
 	@Autowired
 	private TestCaseDao testCaseDao;
+	
+	/* Creates a instance of ReleaseValidator class */
+	TicketValidator ticketValidator;
+	
+	/** Autowire this instance and set this to the controller constructor */
+	@Autowired
+	public TicketController(TicketValidator ticketValidator){
+		this.ticketValidator = ticketValidator;
+	}
 	
 	/*Index variable to control which position will be accessed in the List<>*/
 	private Integer i;
@@ -73,6 +86,71 @@ public class TicketController {
         return "tickets";
     }
 	
+	@RequestMapping(value = "/addTicket", method = RequestMethod.POST)
+	public String releaseFormSubmit(@ModelAttribute("ticket") Ticket ticket, BindingResult result,
+			@RequestParam("project") String project,
+			@RequestParam("tag") String tag, 
+			@RequestParam("id_release") Integer id_release){
+		
+		System.out.println("idRelease: " + id_release);
+		
+		ticket.setId_release(id_release);
+		//TODO: testcase_status being passed as empty but testcase_status must be changed to Null in the database
+		ticket.setTestcase_status("");
+		
+		/* Validate the Release object and return a BindingResult object */
+		ticketValidator.validate(ticket, result);
+		
+		/* If the BindingResult object has errors: */
+		if(result.hasErrors()){
+			System.out.println("Result hasErrors.");
+			/* Get back to the releases.jsp page with a error message displaying */
+			return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release+"&msg=true";
+		}else{
+			/* If the object has no errors, insert the object in the database using 
+			 * the save method of ReleaseDaoImpl bean, and redirect to the releases.jsp
+			 * page using the GetList URL. */
+			try {
+				ticketDao.saveOrUpdate(ticket);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+			return "redirect:refreshTicket";
+		}				
+	}
+	
+	
+	//AJAX
+	@RequestMapping(value="/createTicket", method=RequestMethod.POST, 
+				produces = MediaType.APPLICATION_JSON_VALUE, 
+				consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String addTicket(@RequestBody Ticket ticket,  BindingResult result) {
+		
+		System.out.println("Jira: " + ticket.getJira() + ", Description: " +
+		ticket.getDescription() + ", Environment: " + ticket.getEnvironment() + ", Developer: " + ticket.getDeveloper()
+		+ ", Tester: " + ticket.getTester() + ", Status: " + ticket.getTestcase_status());
+		
+		Integer status = 0;
+		
+		/* Validate the Release object and return a BindingResult object */
+		ticketValidator.validate(ticket, result);
+		
+		/* If the BindingResult object has errors: */
+		if(result.hasErrors()){
+			/*set status variable to 1 and javascript will get this response 
+			 * and show a notification to the user */
+			status = 1;
+		}else{
+			/* If the object has no errors, insert the object in the database */
+			try {
+				ticketDao.saveOrUpdate(ticket);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	
+		return "{\"status\":"+status+"}";
+    }
 	
 	/** Map the ticketsList URL on GET method.
 	 * Receive as the parameters from the previous page: release project, release tag and and
@@ -109,12 +187,27 @@ public class TicketController {
 		
 		List<Ticket> ticketList = ticketDao.findAllByReleaseId(id_release);
 
-			
 		/* Return new view using the list on the tickets.page */
 		return new ModelAndView("tickets", "ticketList", ticketList);
 	}	
 	
-	//Controller to support selection of required row on page startTest
+	
+	//AJAX-NOT-BEING-USED
+	@RequestMapping(value="/ticketsListtAjax", method=RequestMethod.GET,
+    		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String getReleaseList(@RequestParam("id_release") Integer id_release) {
+	
+	System.out.println("idRelease: " + id_release);	
+	List<Ticket> data = ticketDao.findAllByReleaseId(id_release);
+	String jsonData = new Gson().toJson(data);
+	System.out.println("Json: " + jsonData);
+	
+	return jsonData;
+	}
+
+	
+	/*Controller to support selection of required row on page startTest. It had to be separate controller for proper control of which row to highlight*/  
 	@RequestMapping(value = "/startTestsSelected", method = RequestMethod.GET)
 	public ModelAndView startTestsSelected(@RequestParam(value = "id_ticket", required = false) Long id_ticket,
 			@RequestParam(value = "id_testcase", required = false) Long id_testcase,
@@ -127,6 +220,9 @@ public class TicketController {
 			@ModelAttribute("testCase") TestCases testCase,
 			ModelMap model){
 			
+		/*Add the below attributes to the model of this controller, 
+		 * each addition will be passed to the view "startTests" called in the first parameter
+		 * of  return new ModelAndView()*/
 		model.addAttribute("current_task", id_task);
 		model.addAttribute("id_testcase", id_testcase);
 		model.addAttribute("id_ticket", id_ticket);
@@ -135,7 +231,12 @@ public class TicketController {
 		model.addAttribute("testcase_description", testcase_description);
 		model.addAttribute("results", results);
 		model.addAttribute("comments", comments);
+		/*The atributte -> ("testCasesList", testCasesList)
+		 * could also be added as -> model.addAttribute("testCasesList", testCasesList);
+		 * */
 		
+		
+		/*Load list of testCases from idTicket, to reload the page */
 		List<TestCases> testCasesList = testCaseDao.findAllByTicketId(id_ticket);
 		
 		return new ModelAndView("startTests", "testCasesList", testCasesList);
@@ -211,6 +312,7 @@ public class TicketController {
 		return null;
 	}
 	
+	/*Controller called when the button to PASS or FAIL a test is clicked*/
 	@RequestMapping(value = "/startTestsP", method = RequestMethod.POST)
 	public ModelAndView addStartTests(@RequestBody
 			@RequestParam String action,
@@ -308,7 +410,6 @@ public class TicketController {
 				}
 			}
 		}	
-		
 		/* Redirect to the ticketList URL using the received parameters */
 		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
 	}
@@ -323,17 +424,22 @@ public class TicketController {
 			@ModelAttribute("id_release") Integer id_release,
 			@ModelAttribute("ticket") Ticket ticket,
 			@RequestParam("id_ticket") Integer id_ticket,
+			@RequestParam("jira") String jira,
+			@RequestParam("description") String description,
+			@RequestParam("environment") String environment,
 			@RequestParam("tester") String tester,
 			@RequestParam("developer") String developer,
 			@RequestParam("status") String status) {
 		
-		
+		System.out.println("Jira: " + ticket.getJira() 
+					+ " - Description: " + ticket.getDescription() 
+					+ " - Environment: " + ticket.getEnvironment()
+					+ " - Developer: " + ticket.getDeveloper());
 		ticketDao.saveOrUpdate(ticket);				
 		
 		/* Redirect to the ticketsList URL using the received parameters */
 		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
 	}
-	
 	
 	//Delete info
 		@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
@@ -351,7 +457,9 @@ public class TicketController {
 	public String back(SessionStatus status){
 		
 		//Empty the session attributes
-		status.setComplete();
+		/* Cleaning operation of the session's attributes removed, to keep application's parameters
+		 * throughout the views.*/
+		//status.setComplete();
 		
 		//Redirect to the previous page
 		return "redirect:getList";

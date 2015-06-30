@@ -38,7 +38,7 @@ h2 {
 
 #buttonsRight {
 	margin-top: 20px;
-	padding-left: 50px;
+	padding-left: 210px;
 }
 
 #upload {
@@ -92,8 +92,15 @@ th, td, tr.tcHeader {
 
 #navbarimg {
 	padding-top: 8px;
+	padding-right: 30px;
 }
 
 .failedLink {
 	color: red;
+}
+
+/*************TESTCASE.JSP****TO BE CREATED INDIVIDUAL STYLE FILES************/
+
+.form-horizontal .control-label {
+	padding-right: 5px;
 }

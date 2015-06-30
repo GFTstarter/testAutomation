@@ -25,7 +25,7 @@
 <div class="container">
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="navbar-header">
-			<label class="navbar-brand">Blotter - Test case automation</label>
+			<label class="navbar-brand">${parameter.project_name} - Test case application</label>
 		</div>
 		<div class="navbar-collapse collapse">
 			<div id="navbarlabel" class="navbar navbar-right">

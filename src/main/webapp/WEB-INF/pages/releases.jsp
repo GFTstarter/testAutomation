@@ -25,7 +25,7 @@
 				</c:if>
 		
 				<div class="alert alert-success" role="alert" id="addReleaseResponse"></div>
-				<div class="alert alert-danger" role="alert" id="deleteReleaseResponse"></div>
+				<div align="left" class="alert alert-danger" role="alert" id="opFailReleaseResponse"></div>
 				<!-- Releases table -->
 				<table id="releases" class="table table-hover table-striped">
 					 <thead>

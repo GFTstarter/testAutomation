@@ -42,6 +42,11 @@
 									<td class="lastLine"></td>
 								</tr>
 								<tr>
+									<th>Ticket:</th>
+									<td>${jira}</td>
+									<td></td>
+								</tr>
+								<tr>
 									<th>Environment:</th>
 									<td>${environment}</td>
 									<td></td>
@@ -59,8 +64,8 @@
 								<tr>
 									<th class="lastLine">Time to run all tests:</th>
 									<td class="lastLine time">${run_time}</td>
-									<td class="lastLine"><a title="Click to edit the field"
-										href="#" class="time" data-toggle="modal" data-id="${id_ticket}">
+									<td class="lastLine"><a title="Click to edit the field" 
+										href="#" class="editHeader" data-toggle="modal" data-id="${id_ticket}">
 											<span class="glyphicon glyphicon-pencil"></span>
 									</a></td>				
 								</tr>
@@ -100,26 +105,27 @@
 											<!-- Button edit -->
 											<td><a title="Click to edit the row data" href="#"
 												class="edit" data-toggle="modal"
-												data-id="${testcase.testcase_id}"> <span
-													class="glyphicon glyphicon-pencil"></span>
+												data-id="${testcase.testcase_id}"> 
+												<span class="glyphicon glyphicon-pencil"></span>
 											</a></td>
 		
 											<!-- Button Reset Test -->
 											<td><a title="Click to Reset Tests field" href="#" class="reset"
-												data-toggle="modal" data-id="${testcase.testcase_id}"> <span
-													class="glyphicon glyphicon-refresh"></span>
+												data-toggle="modal" data-id="${testcase.testcase_id}">
+												 <span class="glyphicon glyphicon-refresh"></span>
 											</a></td>
 		
 											<!-- Button Play Test -->  
-											<td><a title="Click to Play Test" href="#"
-												class="play" data-toggle="modal" data-id="${testcase.testcase_id}"> <span
-													class="glyphicon glyphicon-play"></span>
+											<td><a title="Click to Play Test" href=""
+													onclick="window.open('startTestsSelected?id_testcase=${testcase.testcase_id}&id_ticket=${testcase.id_ticket}&status=${testcase.status}&pre_requisite=${testcase.pre_requisite}&testcase_description=${testcase.testcase_description}&results=${testcase.results}&comments=${testcase.comments}&id_task=${testcase.task_id}', 'newwindow', 'width=450, height=650'); return false;"
+													class="play" data-id="${testcase.testcase_id}"> 
+												<span class="glyphicon glyphicon-play"></span>
 											</a></td>
-		
+									
 											<!-- Button Delete -->
 											<td><a title="Click to delete" href="#" class="delete"
-												data-toggle="modal" data-id="${testcase.testcase_id}"> <span
-													class="glyphicon glyphicon-remove"></span>
+												data-toggle="modal" data-id="${testcase.testcase_id}"> 
+												<span class="glyphicon glyphicon-remove"></span>
 											</a></td>
 										</tr>								
 									</c:forEach>
@@ -131,7 +137,7 @@
 					
 					<div class="footer"></div>
 					
-					<!-- Add new test case table -->
+					<!-- Add new testCase table -->
 					<h4>Add new Test Case</h4>
 					<form:form method="POST" commandName="testCase" action="testCases">
 						<table id="addTestCases" class="table table-bordered">
@@ -160,6 +166,7 @@
 											<form:option value="Testing in UAT" label="Testing in UAT" />
 											<form:option value="Closed" label="Closed" />		
 											<form:option value="Failed" label="Failed" />
+											<form:option value="Passed" label="Passed" />	
 										</form:select></td>
 									<td><form:input path="tested_by" cssClass="form-control"
 											placeholder="Tested By" value="${user_tested_by}" /></td>
@@ -215,7 +222,8 @@
 											<form:option value="Ready for UAT" label="Ready for UAT" />
 											<form:option value="Testing in UAT" label="Testing in UAT" />
 											<form:option value="Closed" label="Closed" />
-											<form:option value="Failed" label="Failed" />					
+											<form:option value="Failed" label="Failed" />
+											<form:option value="Passed" label="Passed" />					
 										</form:select>
 									</div>
 									<div class="form-group">
@@ -273,7 +281,7 @@
 					</div>
 				</div>
 		
-				<!-- Modal to edit "Time to run all tests" -->
+				<!-- Modal to edit "Time to run all tests and the whole ticket" -->
 				<div class="modal fade" id="modalTime" tabindex="-1" role="dialog"
 					aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
@@ -284,20 +292,76 @@
 								</button>
 								<h4 class="modal-title" id="myModalLabel">Edit the time to run all tests</h4>
 							</div>
-							<form:form method="POST" commandName="ticket" action="updateTime" role="form">
+							<form:form method="POST" commandName="ticket" action="updateTime" role="form" cssClass="form-horizontal">
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="run_time">Time to run all tests</label>
-										<form:input path="run_time" type="text" name="run_time"
-											id="run_time" value="" cssClass="form-control" />
+									<label for="testCaseJira" class="col-sm-2 control-label">Ticket</label>
+									<div class="col-sm-10">
+										<form:input path="jira" cssClass="form-control" id="testCaseJira" value="${jira}"/>
+										<form:errors path="jira" cssClass="error" />
 									</div>
-									<input type="hidden" name="id_ticket" value="${id_ticket}" />
-									<input type="hidden" name="tb_description" value="${description}" />
-									<input type="hidden" name="tb_tag" value="${tag}" />
-									<input type="hidden" name="tb_environment" value="${environment}" />
-									<input type="hidden" name="tb_developer" value="${developer}" />
-									<input type="hidden" name="tb_tester" value="${tester}" />
-									<input type="hidden" name="tb_jira" value="${jira}" />
+								</div>
+								<div class="form-group">
+									<label for="testCaseDescription" class="col-sm-2 control-label">Description</label>
+									<div class="col-sm-10">
+										<form:input path="description" cssClass="form-control" id="testCaseDescription" value="${description}"/>
+										<form:errors path="description" cssClass="error" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="testCaseEnvironment" class="col-sm-2 control-label">Environment</label>
+									<div class="col-sm-10">
+										<form:input path="environment" cssClass="form-control" id="testCaseEnvironment" value="${environment}"/>
+										<form:errors path="environment" cssClass="error" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="testCaseDeveloper" class="col-sm-2 control-label">Developer</label>
+									<div class="col-sm-10">
+										<form:input path="developer" type="email" name="testCaseDeveloper" value="${developer}"
+											id="ticketDeveloper" cssClass="form-control" />
+										<form:errors path="developer" cssClass="error" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="testCaseTester" class="col-sm-2 control-label">Tester</label>
+									<div class="col-sm-10">
+										<form:input path="tester" type="email" name="testCaseTester" value="${tester}"
+										id="ticketTester" cssClass="form-control" />
+										<form:errors path="tester" cssClass="error" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="run_time" class="col-sm-2 control-label">Time to run all tests</label>
+									<div class="col-sm-10">
+										<form:input path="run_time" type="text" name="run_time" value="${run_time}" 
+											id="run_time" cssClass="form-control" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label lbStatus">Status</label>
+									<div class="col-sm-10">
+										<form:select path="status" id="ticketStatus"
+											cssClass="form-control">
+											<form:option value="Open" label="Open" />
+											<form:option value="In UAT" label="In UAT" />
+											<form:option value="Ready for Development" label="Ready for Development" />
+											<form:option value="In Testing" label="In Testing" />
+											<form:option value="Ready for Testing" label="Ready for Testing" />
+											<form:option value="On Hold" label="On Hold" />
+											<form:option value="Failed" label="Failed" />
+											<form:option value="Passed" label="Passed" />
+										</form:select>
+									</div>
+								</div>
+									<input type="" name="tb_status" id="status" value="${status}" />
+									<input type="" name="id_ticket" value="${id_ticket}" />
+									<input type="" name="tb_description" value="${description}" />
+									<input type="" name="tb_tag" value="${tag}" />
+									<input type="" name="tb_environment" value="${environment}" />
+									<input type="" name="tb_developer" value="${developer}" />
+									<input type="" name="tb_tester" value="${tester}" />
+									<input type="" name="tb_jira" value="${jira}" />
 								</div>
 		
 								<div class="modal-footer">
@@ -306,7 +370,7 @@
 								</div>
 							</form:form>
 						</div>
-					</div>
+					</div>		
 				</div>
 		
 				<!-- Modal Reset Tests "clean fields: Status, Tested By, Tested On, Comments " -->

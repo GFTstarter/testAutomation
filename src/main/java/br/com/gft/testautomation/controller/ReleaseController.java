@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +24,7 @@ import com.google.gson.Gson;
 import br.com.gft.testautomation.common.login.LoginUtils;
 import br.com.gft.testautomation.common.model.Release;
 import br.com.gft.testautomation.common.model.Ticket;
+import br.com.gft.testautomation.common.repositories.ParameterDao;
 import br.com.gft.testautomation.common.repositories.ReleaseDao;
 import br.com.gft.testautomation.common.repositories.TicketDao;
 import br.com.gft.testautomation.common.validator.ReleaseValidator;
@@ -36,7 +36,7 @@ import br.com.gft.testautomation.common.validator.ReleaseValidator;
 @Controller
 /** Put on the Session (and later uses it), if not exists, the attributes: 
  * release project, release tag and release id. */
-@SessionAttributes({"project", "tag", "id_release"})
+@SessionAttributes({"project", "tag", "id_release", "parameter"})
 public class ReleaseController{
 	
 	
@@ -47,6 +47,10 @@ public class ReleaseController{
 	/* Autowires the TicketDaoImpl bean */
 	@Autowired
 	private TicketDao ticketDao;
+	
+	/* Autowires the ParameterDaoImpl bean */
+	@Autowired
+	private ParameterDao parameterDao;
 	
 	/* Creates a instance of ReleaseValidator class */
 	ReleaseValidator releaseValidator;
@@ -63,10 +67,13 @@ public class ReleaseController{
 	public ModelAndView getReleaseList(ModelMap model, SessionStatus status){
 		
 		/* Empty all the attributes from the session */
-		status.setComplete();
+		/* Cleaning operation of the session's attributes removed, to keep application's parameters
+		 * throughout the views.*/
+		//status.setComplete(); 
 		
 		/* Add an object to the model attribute */
 		model.addAttribute("release", new Release());
+		
 		
 		/* Add the logged in user to show on the page */
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -91,6 +98,7 @@ public class ReleaseController{
 		List<Release> data = releaseDao.findAll();
 		String jsonData = new Gson().toJson(data);
 		System.out.println("Json: " + jsonData);
+		
         return jsonData;
     }
 	
@@ -122,14 +130,33 @@ public class ReleaseController{
 	
 	//AJAX
 	@RequestMapping(value="/createRelease", method=RequestMethod.POST, 
-            		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+            		produces = MediaType.APPLICATION_JSON_VALUE, 
+            		consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Release addRelease(@RequestBody Release release) {
+    public String addRelease(@RequestBody Release release,  BindingResult result) {
+		
 		System.out.println("Project: " + release.getName() + ", Tag: " +
 				release.getTag() + ", Target_Date: " + release.getTarget_date());
-		releaseDao.saveOrUpdate(release);
 		
-		return release;
+		Integer status = 0;
+		
+		/* Validate the Release object and return a BindingResult object */
+		releaseValidator.validate(release, result);
+		
+		/* If the BindingResult object has errors: */
+		if(result.hasErrors()){
+			/*set status variable to 1 and javascript will get this response 
+			 * and show a notification to the user */
+			status = 1;
+		}else{
+			/* If the object has no errors, insert the object in the database */
+			try {
+				releaseDao.saveOrUpdate(release);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	
+		return "{\"status\":"+status+"}";
     }
 	
 	/** Map the URL editRelease, that comes from a modal, on the POST method.
@@ -157,15 +184,28 @@ public class ReleaseController{
 	@RequestMapping(value="/editReleaseAjax", method=RequestMethod.POST, 
 			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Release editReleaseAjax(@RequestBody Release release) {
+	public String editReleaseAjax(@RequestBody Release release, BindingResult result) {
 		System.out.println("UPDATED - Project: " + release.getName() + ", Tag: " +
 				release.getTag() + ", Target_Date: " + release.getTarget_date());
-		releaseDao.saveOrUpdate(release);
-
-		return release;
+		
+		Integer status = 0;
+		
+		/* Validate the Release object and return a BindingResult object */
+		releaseValidator.validate(release, result);
+		
+		/* If the BindingResult object has errors: set status variable to 1 and 
+		 * javascript will get this response and show a notification to the user */
+		if(result.hasErrors()){
+			status = 1;
+		}else{
+			try {
+				releaseDao.saveOrUpdate(release);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	
+		return "{\"status\":"+status+"}";
 	}
-	
-	
 	
 	@RequestMapping(value = "/deleteRelease", method = RequestMethod.POST)
 	public String deleteRelease(@RequestParam("delete_id_release") Integer id){
@@ -181,12 +221,12 @@ public class ReleaseController{
     @ResponseBody
     public String deleteReleaseAjax(@RequestBody Integer id) {
 		System.out.println("ID: " + id);
-		Integer status = 1;
+		Integer status = 0;
 		List<Ticket> listTicket = ticketDao.findAllByReleaseId(id);
 		
 		//Check if the release has tickets assigned to it, if so it can not be deleted
 		if(listTicket.size() > 0){
-			status = 0;
+			status = 1;
 		}
 		else
 			releaseDao.delete(id);

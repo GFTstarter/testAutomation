@@ -6,20 +6,28 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import br.com.gft.testautomation.common.model.Login;
+import br.com.gft.testautomation.common.model.Parameter;
 import br.com.gft.testautomation.common.repositories.LoginDao;
+import br.com.gft.testautomation.common.repositories.ParameterDao;
 
 
 /** Controller responsible for the login.jsp, accessdenied,jsp and for the URLs login, logout 
  * and accessdenied. Here, the URLs mapped by Spring Security and redirected into their
  * matched pages. */
 @Controller
+@SessionAttributes({"parameter"})
 public class LoginController {
 
 	/* Autowires a LoginDaoImpl bean */
 	@Autowired
 	private LoginDao loginDao;
+	
+	/* Autowires the ParameterDaoImpl bean */
+	@Autowired
+	private ParameterDao parameterDao;
 	
 	/** Map the URL login on GET method.
 	 * The login.jsp is already mapped as default index page on Spring Security.
@@ -30,6 +38,14 @@ public class LoginController {
 		//Creates a new Login object to populate the model
 		model.addAttribute("login", new Login());	
 			
+		/*Initialise the parameters of the application and set it to the session
+		 * with the @SessionAttibutes annotation */
+		Parameter param = new Parameter();
+		param = parameterDao.findParameterById(1);
+		System.out.println("Project_name: " + param.getProject_name() 
+					+ " - importXMLButton: " + param.getImportJIRAxmlButton());
+		model.addAttribute("parameter", param);
+		
 		//Redirect to the .jsp page
 		return "login";
 	}
@@ -65,7 +81,7 @@ public class LoginController {
 	public String addNewUser(@ModelAttribute("login") Login login){
 		
 				
-		/* If any of the fields are empty, return to the page exhibing a error message */
+		/* If any of the fields are empty, return to the page exhibing an error message */
 		if((login.getUsername().equals("")) || (login.getUsername().equals("")) ){
 			return "redirect:login?emsg=true";
 		}else{

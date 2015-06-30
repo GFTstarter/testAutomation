@@ -43,7 +43,7 @@
 	<bean id="releaseDao" class="br.com.gft.testautomation.common.repositories.ReleaseDaoJdbc" />
 	<bean id="ticketDao" class="br.com.gft.testautomation.common.repositories.TicketDaoJdbc" />
 	<bean id="testCaseDao" class="br.com.gft.testautomation.common.repositories.TestCaseDaoJdbc" />
-	
+	<bean id="parameterDao" class="br.com.gft.testautomation.common.repositories.ParameterDaoJdbc" />
 	
 	<bean id="populateTicket" class="br.com.gft.testautomation.controller.PopulateTicket" />
 	<bean id="xmlUnmarshaller" class="br.com.gft.testautomation.common.unmarshaller.XmlUnmarshaller" />
@@ -94,7 +94,8 @@
 
 	<!-- Validator beans -->
 	<bean class="br.com.gft.testautomation.common.validator.ReleaseValidator" />
-
+	<bean class="br.com.gft.testautomation.common.validator.TicketValidator" />
+	
 	<!-- Multipart Resolver beans -->
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
