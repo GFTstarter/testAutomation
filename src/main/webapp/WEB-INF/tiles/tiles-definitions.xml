@@ -18,6 +18,8 @@
         </put-list-attribute>
         <put-list-attribute name="jsList" cascade="true">
         	<add-attribute value="/resources/js/jquery-1.11.1.min.js"/>
+        	
+        	<add-attribute value="/resources/js/jquery-sortable.js"/>
         	<add-attribute value="/resources/js/bootstrap.min.js"/>
         </put-list-attribute>
     </definition>

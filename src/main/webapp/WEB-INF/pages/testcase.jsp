@@ -37,7 +37,7 @@
 								<tr>
 									<th>Release:</th>
 									<td><c:out value="${tag}" /></td>
-									<td></td>
+									<td></td>	
 									<th rowspan="5" class="lastLineCenter">${description}</th>
 									<td class="lastLine"></td>
 								</tr>
@@ -73,7 +73,7 @@
 						</div>
 						<div class="panel-body" >
 							<!-- Test cases table --> 
-							<table id="testCases" class="table table-bordered table-hover table-striped">
+							<table id="testCases" class="table table-hover table-striped">
 								<thead>
 									<tr>
 										<th>Task ID</th>
@@ -84,6 +84,8 @@
 										<th>Description</th>
 										<th>Expected Results</th>
 										<th>Comments</th>
+										<th>Testcase ID</th>
+										<th></th>
 										<th></th>
 										<th></th>
 										<th></th>
@@ -93,7 +95,7 @@
 								<tbody>
 									<c:forEach var="testcase" items="${testCasesList}">
 										<tr>
-											<td class="testCaseId"></td>
+											<td class="testCaseTaskId"></td>
 											<td class="testCaseStatus">${testcase.status}</td>
 											<td class="testCaseTestedBy">${testcase.tested_by}</td>
 											<td class="testCaseTestedOn">${testcase.tested_on}</td>
@@ -101,7 +103,19 @@
 											<td class="testCaseDescription" style="width: 100px;">${testcase.testcase_description}</td>
 											<td class="testCaseResults">${testcase.results}</td>
 											<td class="testCaseComments">${testcase.comments}</td>
-																													
+											<td class="testCaseId">${testcase.testcase_id}</td>
+											<!-- Button order -->
+											<td><a title="Click to move up the row data" href="#"
+												class="moveup" data-toggle="modal"
+												data-id="${testcase.testcase_id}"> 
+												<span class="glyphicon glyphicon-chevron-up"></span>
+											</a>
+											<a title="Click to move down the row data" href="#"
+												class="movedown" data-toggle="modal"
+												data-id="${testcase.testcase_id}"> 
+												<span class="glyphicon glyphicon-chevron-down"></span>
+											</a></td>
+																												
 											<!-- Button edit -->
 											<td><a title="Click to edit the row data" href="#"
 												class="edit" data-toggle="modal"
@@ -114,27 +128,27 @@
 												data-toggle="modal" data-id="${testcase.testcase_id}">
 												 <span class="glyphicon glyphicon-refresh"></span>
 											</a></td>
-		
+											
 											<!-- Button Play Test -->  
 											<td><a title="Click to Play Test" href=""
 													onclick="window.open('startTestsSelected?id_testcase=${testcase.testcase_id}&id_ticket=${testcase.id_ticket}&status=${testcase.status}&pre_requisite=${testcase.pre_requisite}&testcase_description=${testcase.testcase_description}&results=${testcase.results}&comments=${testcase.comments}&id_task=${testcase.task_id}', 'newwindow', 'width=450, height=650'); return false;"
 													class="play" data-id="${testcase.testcase_id}"> 
 												<span class="glyphicon glyphicon-play"></span>
 											</a></td>
-									
+											
 											<!-- Button Delete -->
 											<td><a title="Click to delete" href="#" class="delete"
 												data-toggle="modal" data-id="${testcase.testcase_id}"> 
 												<span class="glyphicon glyphicon-remove"></span>
 											</a></td>
 										</tr>								
-									</c:forEach>
+									</c:forEach> 
 								</tbody>
 							</table>
 							
 						</div>
 					</div>
-					
+					<a class="btn btn-primary" id="saveSort">Save</a>
 					<div class="footer"></div>
 					
 					<!-- Add new testCase table -->
@@ -143,11 +157,12 @@
 						<table id="addTestCases" class="table table-bordered">
 							<thead>
 								<tr>
-									<th>Task ID</th>
+								<!-- Column TaskID on table of a new testCases removed, TaskID is being incremented and reordered when a delete occurs -->
+									<th style="display:none;">Task ID</th>
 									<th>Status</th>
 									<th>Tested By</th>
 									<th>Tested On</th>
-									<th >Pre-Requisite</th>
+									<th>Pre-Requisite</th>
 									<th>Description</th>
 									<th>Expected Results</th>
 									<th>Comments</th>
@@ -155,8 +170,8 @@
 							</thead>
 							<tbody>
 								<tr> 
-									<td><form:input readOnly="true" path="task_id" cssClass="form-control"
-											placeholder="Task ID" size="10" value="${task_id}" /></td>
+									<td style="display:none;"><form:input readOnly="true" path="task_id" cssClass="form-control"
+											placeholder="Task ID" size="10" value="${task_id}" /></td> 
 									<td><form:select path="status" cssClass="form-control">
 											<form:option value="On hold" label="On hold" />
 											<form:option value="In development" label="In development" />
@@ -187,7 +202,7 @@
 						<a href="refreshTicket?project=${project}&tag=${tag}&jira=${jira}&id_release=${id_release}"
 						   class="btn btn-primary">Back</a>
 		
-						<button type="submit" class="btn btn-primary" id="buttonfloat">Add new Test Case</button>
+						<button type="submit" class="btn btn-primary newTestCase" id="buttonfloat">Add new Test Case</button>
 						<input type="hidden" name="id_ticket" value="${id_ticket}" />
 						<input type="hidden" name="td_description" value="${description}" />
 						<input type="hidden" name="td_tag" value="${tag}" />
@@ -210,7 +225,8 @@
 								</button>
 								<h4 class="modal-title" id="myModalLabel">Edit</h4>
 							</div>
-							<form:form method="POST" commandName="testCase" action="updateTestCases" role="form">
+							<!--  updateTestCases  -->
+							<form:form id="editTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/editTestCaseAjax.json" role="form">
 								<div class="modal-body">
 									<div class="form-group">
 										<label for="testCaseStatus">Status</label>
@@ -262,15 +278,16 @@
 											cssClass="form-control" />
 									</div>
 		
-									<form:input path="testcase_id" type="hidden" name="testcase_id" id="testcase_id" value="" />
-									<input type="hidden" name="id_ticket" value="${id_ticket}" />
-								 	<input type="hidden" name="tc_description" value="${description}" /> 
-									<input type="hidden" name="tc_tag" value="${tag}" />
-									<input type="hidden" name="tc_environment" value="${environment}" />
-									<input type="hidden" name="tc_developer" value="${developer}" />
-									<input type="hidden" name="tc_tester" value="${tester}" />
-									<input type="hidden" name="tc_run_time" value="${run_time}" />
-									<input type="hidden" name="tc_jira" value="${jira}" />
+									<form:input path="testcase_id" type="" name="testcase_id" id="testcase_id" value="" />
+									<form:input path="task_id" type="" name="task_id" id="taskId" value="" />
+									<input type="" name="id_ticket" id="ticket_id" value="${id_ticket}" />
+								 	<input type="" name="tc_description" value="${description}" /> 
+									<input type="" name="tc_tag" value="${tag}" />
+									<input type="" name="tc_environment" value="${environment}" />
+									<input type="" name="tc_developer" value="${developer}" />
+									<input type="" name="tc_tester" value="${tester}" />
+									<input type="" name="tc_run_time" value="${run_time}" />
+									<input type="" name="tc_jira" value="${jira}" />
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

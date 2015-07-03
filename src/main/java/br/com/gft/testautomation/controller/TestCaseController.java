@@ -6,15 +6,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,6 +27,8 @@ import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.TestCaseDao;
 import br.com.gft.testautomation.common.repositories.TicketDao;
 
+import com.google.gson.Gson;
+
 /** Controller responsible for the testcase.jsp and the URLS testCases and updateTestCases.
  * This controller displays the testcases list, the form to add a new test case, and
  * the modal to edit the data. */
@@ -32,7 +37,6 @@ import br.com.gft.testautomation.common.repositories.TicketDao;
  * release tag and release id. */
 @SessionAttributes({"tag", "id_release", "parameter"})
 public class TestCaseController {
-
 	
 	/* Autowires the TestCaseDaoImpl bean */
 	@Autowired
@@ -46,6 +50,19 @@ public class TestCaseController {
 	 * release tag, the ticket environment, the ticket developer, the ticket tester
 	 * and the ticket id. These parameters are received to properly show to the user 
 	 * that they are accessing the correct page.*/
+	//AJAX - TERMINAR DE TESTAR CHAMDA AJAX PARA TESTCASE TABLE
+	@RequestMapping(value="/testCasesAjax", method=RequestMethod.GET,
+            		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getReleaseList() {
+		long id = 52;
+		List<TestCases> data = testCaseDao.findAllByTicketId(id);
+		String jsonData = new Gson().toJson(data);
+		System.out.println("Json: " + jsonData);
+		
+        return jsonData;
+    }
+	
 	@RequestMapping(value = "/testCases", method = RequestMethod.GET)
 	public ModelAndView initTestCasesPage(@RequestParam("description") String description,
 			@ModelAttribute("tag") String tag,
@@ -111,6 +128,36 @@ public class TestCaseController {
 		return new ModelAndView("testcase", "testCasesList", testCasesList);
 	}
 	
+	//AJAX-NOT-BEING-USED
+	@RequestMapping(value="/createTestCase", method=RequestMethod.POST, 
+            		produces = MediaType.APPLICATION_JSON_VALUE, 
+            		consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String addTestCase(@RequestBody TestCases testCase,  BindingResult result) {
+		
+		System.out.println("TaskID: " + testCase.getTask_id() + ", Status: " +
+				testCase.getStatus() + ", TestedBy: " + testCase.getTested_by());
+		
+		Integer status = 0;
+		
+		/* Validate the Release object and return a BindingResult object */
+		//releaseValidator.validate(release, result);
+		testCaseDao.saveOrUpdate(testCase);
+		/* If the BindingResult object has errors: */
+		/*if(result.hasErrors()){
+			*set status variable to 1 and javascript will get this response 
+			 * and show a notification to the user *
+			status = 1;
+		}else{
+			* If the object has no errors, insert the object in the database *
+			try {
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	*/
+		return "{\"status\":"+status+"}";
+    }
 	/** Map the testCases URL on the POST method.
 	 * These are different functions displayed on the same page. Here, the user can
 	 * add a new Test Case using the form on the end of the page.
@@ -165,14 +212,30 @@ public class TestCaseController {
 			@ModelAttribute("id_ticket") Integer id_ticket,
 			@ModelAttribute("tag") String tag,
 			@RequestParam("tc_description") String description,
+			@RequestParam("tc_jira") String jira,
 			@RequestParam("tc_developer") String developer,
 			@RequestParam("tc_tester") String tester,
 			@RequestParam("tc_environment") String environment,
 			@RequestParam("tc_run_time") String run_time){
 		
+		System.out.println(" - Status: " + status 
+						+ " - tested_by: " + testedBy +
+						" - tested_on: " + testedOn +
+						" - pre_requisite: " + preRequisite +
+						" - testcase_description: " + testcaseDescription +
+						" - results: " + results +
+						" - comments: " + comments);
+		
+		System.out.println(" - Status: " + testCase.getStatus() 
+				+ " - tested_by: " + testCase.getTested_by() +
+				" - tested_on: " + testCase.getTested_on() +
+				" - pre_requisite: " + testCase.getPre_requisite() +
+				" - testcase_description: " + testCase.getTestcase_description() +
+				" - results: " + testCase.getResults() +
+				" - comments: " + testCase.getComments());
 		/* If the description is empty (only field that can't be empty), return with a error message */
 		if (testcaseDescription == ""){
-			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time+"&msg=true";
+			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time+"&msg=true";
 		}else{
 			/* Update the data using the saveOrUpdate from jdbcTemplate */
 			System.out.println(testcase_id);
@@ -181,9 +244,73 @@ public class TestCaseController {
 			testCaseDao.saveOrUpdate(testCase);
 			
 			/* Redirect to the testCases URL using the received parameters */
-			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
+			return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
 		}	
-	}	
+	}
+	
+	//AJAX
+	@RequestMapping(value="/editTestCaseSort", method=RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String editTestCaseSort(@RequestBody TestCases testCase, BindingResult result) {
+		
+		System.out.println("CONTROLLER - task_id: " + testCase.getTask_id() +
+							"testCase_id: " + testCase.getTestcase_id());
+		Integer status = 0;
+		
+		testCaseDao.updateSort(testCase);
+		/* Validate the Release object and return a BindingResult object */
+		//releaseValidator.validate(release, result);
+		
+		/* If the BindingResult object has errors: set status variable to 1 and 
+		 * javascript will get this response and show a notification to the user */
+		/*if(result.hasErrors()){
+			status = 1;
+		}else{
+			try {
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	*/
+		return "{\"status\":"+status+"}";
+	}
+	
+	//AJAX
+	@RequestMapping(value="/editTestCaseAjax", method=RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String editTestCaseAjax(@RequestBody TestCases testCase, BindingResult result) {
+		
+		System.out.println("CONTROLLER  - IdTask: " + testCase.getTask_id() +
+				" - Status: " + testCase.getStatus() +
+				" - tested_by: " + testCase.getTested_by() +
+				" - tested_on: " + testCase.getTested_on() +
+				" - pre_requisite: " + testCase.getPre_requisite() +
+				" - testcase_description: " + testCase.getTestcase_description() +
+				" - results: " + testCase.getResults() +
+				" - comments: " + testCase.getComments());
+		
+		Integer status = 0;
+		
+		testCaseDao.saveOrUpdate(testCase);
+		/* Validate the Release object and return a BindingResult object */
+		//releaseValidator.validate(release, result);
+		
+		/* If the BindingResult object has errors: set status variable to 1 and 
+		 * javascript will get this response and show a notification to the user */
+		/*if(result.hasErrors()){
+			status = 1;
+		}else{
+			try {
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	*/
+		return "{\"status\":"+status+"}";
+	}
+		
 	
 	/** Map the updateTime URL on POST method
 	 * Here the user is able to update the field "Time to run all tests" using a modal.

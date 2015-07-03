@@ -24,12 +24,32 @@ public class TestCaseDaoJdbc implements TestCaseDao {
     }
 	
 	@Override
+	public void updateSort(TestCases testCase) {
+		
+		System.out.println("UPDATE SORT");
+		String sql = "UPDATE testcases SET id_task = ? WHERE id_testcase = ?";
+		
+		System.out.println("DAO_JDBC - idTask: " + testCase.getTask_id() + " - idTestCase: " + testCase.getTestcase_id());
+		
+		jdbcTemplate.update(sql, testCase.getTask_id(), testCase.getTestcase_id());
+		
+	}
+
+	@Override
 	public void saveOrUpdate(TestCases testCase) {
 		if(testCase.getTestcase_id() != 0){
 			//update
 			System.out.println("UPDATE");
 			String sql = "UPDATE testcases SET status = ?, tested_by = ?, tested_on = ?, pre_requisite = ?,"
 					+ "testcase_description = ?, results = ?, comments = ? WHERE id_testcase = ?";
+			
+			System.out.println("DAO_JDBC - Status: " + testCase.getStatus() 
+					+ " - tested_by: " + testCase.getTested_by() +
+					" - tested_on: " + testCase.getTested_on() +
+					" - pre_requisite: " + testCase.getPre_requisite() +
+					" - testcase_description: " + testCase.getTestcase_description() +
+					" - results: " + testCase.getResults() +
+					" - comments: " + testCase.getComments());
 			
 			jdbcTemplate.update(sql, testCase.getStatus(), testCase.getTested_by(), testCase.getTested_on(), testCase.getPre_requisite(),
 						testCase.getTestcase_description(), testCase.getResults(), testCase.getComments(), testCase.getTestcase_id());
