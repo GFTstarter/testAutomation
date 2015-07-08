@@ -99,8 +99,13 @@ th, td, tr.tcHeader {
 	color: red;
 }
 
-/*************TESTCASE.JSP****TO BE CREATED INDIVIDUAL STYLE FILES************/
+/*************TESTCASE.JSP****TO BE CREATED -> INDIVIDUAL STYLE FILES************/
 
 .form-horizontal .control-label {
 	padding-right: 5px;
 }
+
+#saveSort{
+	margin-left: 5px
+}
+

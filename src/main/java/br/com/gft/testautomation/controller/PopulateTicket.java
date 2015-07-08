@@ -58,13 +58,17 @@ public class PopulateTicket {
 		String jsonData = new Gson().toJson(ticket, Ticket.class);
 		System.out.println("Json: " + jsonData);
 		
-		//Verify if XML that is being read has register of developer and tester
+		//Verify if XML that is being read has register of developer, tester and environment
 		//If not, is needed to set empty, because these filed are not null and will raise exception
 		if(ticket.getDeveloper() == null){
 			ticket.setDeveloper("");
 		}
 		if(ticket.getTester() == null){
 			ticket.setTester("");
+		}
+		//Environment can not be null, otherwise dataTable will raise exception when loading the table via ajax
+		if(ticket.getEnvironment() == null){
+			ticket.setEnvironment("");
 		}
 		
 		/** Search if the ticket being added already exists to avoid duplication **/

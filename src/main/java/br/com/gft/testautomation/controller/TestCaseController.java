@@ -50,12 +50,12 @@ public class TestCaseController {
 	 * release tag, the ticket environment, the ticket developer, the ticket tester
 	 * and the ticket id. These parameters are received to properly show to the user 
 	 * that they are accessing the correct page.*/
-	//AJAX - TERMINAR DE TESTAR CHAMDA AJAX PARA TESTCASE TABLE
+	
+	//AJAX to load data of testCases's DataTable
 	@RequestMapping(value="/testCasesAjax", method=RequestMethod.GET,
             		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getReleaseList() {
-		long id = 52;
+    public String getReleaseList(@RequestBody @RequestParam("ticketId") Long id) {
 		List<TestCases> data = testCaseDao.findAllByTicketId(id);
 		String jsonData = new Gson().toJson(data);
 		System.out.println("Json: " + jsonData);
@@ -128,7 +128,7 @@ public class TestCaseController {
 		return new ModelAndView("testcase", "testCasesList", testCasesList);
 	}
 	
-	//AJAX-NOT-BEING-USED
+	//AJAX to add new registry on testCases's DataTable
 	@RequestMapping(value="/createTestCase", method=RequestMethod.POST, 
             		produces = MediaType.APPLICATION_JSON_VALUE, 
             		consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -258,21 +258,13 @@ public class TestCaseController {
 							"testCase_id: " + testCase.getTestcase_id());
 		Integer status = 0;
 		
-		testCaseDao.updateSort(testCase);
-		/* Validate the Release object and return a BindingResult object */
-		//releaseValidator.validate(release, result);
-		
-		/* If the BindingResult object has errors: set status variable to 1 and 
-		 * javascript will get this response and show a notification to the user */
-		/*if(result.hasErrors()){
+		try {
+			testCaseDao.updateSort(testCase);
+		} catch (Exception e) {
+			e.printStackTrace();
 			status = 1;
-		}else{
-			try {
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}	*/
+		}			
+		
 		return "{\"status\":"+status+"}";
 	}
 	
@@ -294,20 +286,7 @@ public class TestCaseController {
 		Integer status = 0;
 		
 		testCaseDao.saveOrUpdate(testCase);
-		/* Validate the Release object and return a BindingResult object */
-		//releaseValidator.validate(release, result);
 		
-		/* If the BindingResult object has errors: set status variable to 1 and 
-		 * javascript will get this response and show a notification to the user */
-		/*if(result.hasErrors()){
-			status = 1;
-		}else{
-			try {
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-		}	*/
 		return "{\"status\":"+status+"}";
 	}
 		
@@ -379,6 +358,21 @@ public class TestCaseController {
 
 		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
 	}
+	
+	//AJAX
+	@RequestMapping(value="/resetTestCaseAjax", method=RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String resetTestCaseAjax(@RequestBody TestCases testCase, BindingResult result) {
+		
+		Integer status = 0;
+		
+		testCaseDao.saveOrUpdate(testCase);
+		
+		return "{\"status\":"+status+"}";
+	}
+	
+	
 		
 	/** Map the playTestCases on POST method.
 	 * Here the controller controls the edit function from the modal.
@@ -446,4 +440,17 @@ public class TestCaseController {
 	
 		return "redirect:testCases?id_ticket="+id_ticket+"&tag="+tag+"&jira="+jira+"&description="+description+"&developer="+developer+"&tester="+tester+"&environment="+environment+"&run_time="+run_time;
 	}
+	
+	//AJAX DELETE
+	@RequestMapping(value="/deleteTestCaseAjax", method=RequestMethod.POST, 
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String deleteReleaseAjax(@RequestBody Long id) {
+		Integer status = 0;
+		System.out.println("ID: " + id);
+		
+		testCaseDao.delete(id);
+		
+        return "{\"status\":"+status+"}";
+    }
 }

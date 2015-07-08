@@ -27,7 +27,7 @@ $(document).ready(function() {
 				if(d.status == 1){
 					console.log("Falha");
 					$("#opFailReleaseResponse" ).toggle();
-					$("#opFailReleaseResponse").html("<b>Can not be deleted. This release has tickets assigned to it.</b>").delay(5000).fadeOut()
+					$("#opFailReleaseResponse").html("<b>Can not be deleted. This release has tickets assigned to it.</b>").delay(2500).fadeOut()
 				}
 				oTable.ajax.reload();
 			},
@@ -36,7 +36,7 @@ $(document).ready(function() {
 			error: function(xhr, textStatus, errorThrown){
 				$('#deleteModal').modal('hide');
 				$("#opFailReleaseResponse" ).toggle();
-				$("#opFailReleaseResponse").html("<b>Can't be deleted. This release has tickets assigned to it</b>").delay(5000).fadeOut()
+				$("#opFailReleaseResponse").html("<b>Can't be deleted. This release has tickets assigned to it</b>").delay(2500).fadeOut()
 			}
 		});
 		
@@ -68,7 +68,7 @@ $(document).ready(function() {
 	            if(d.status == 1){
 					console.log("Falha");
 					$("#opFailReleaseResponse" ).toggle();
-					$("#opFailReleaseResponse").html("<b>All filed must not be empty.</b>").delay(5000).fadeOut()
+					$("#opFailReleaseResponse").html("<b>All filed must not be empty.</b>").delay(2500).fadeOut()
 				}           
 	            $('#addModal').modal('hide');
 	            

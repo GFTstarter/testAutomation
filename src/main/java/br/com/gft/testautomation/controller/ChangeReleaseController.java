@@ -35,7 +35,7 @@ public class ChangeReleaseController {
 	 * and the id release. These parameters are receive to properly redirect the user to the
 	 * previous page after the required actions occurred. */
 	@RequestMapping(value = "/changeRelease", method = RequestMethod.GET)
-	public String initChangeReleaseForm(@RequestParam("id_release") Integer id_release,
+	public String initChangeReleaseForm(@RequestParam("id_release") Long id_release,
 			@RequestParam("project") String project,
 			@RequestParam("tag") String tag, ModelMap model) {
 

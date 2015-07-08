@@ -97,7 +97,7 @@ public class TicketDaoJdbc implements TicketDao{
 	}
 	
 	@Override
-	public List<Ticket> findAllByReleaseId(Integer id) {
+	public List<Ticket> findAllByReleaseId(Long id) {
 		String sql = "SELECT * FROM tickets WHERE id_release = ?";
 		
 		List<Ticket> listTickets = jdbcTemplate.query(sql, new Object[] {id}, new RowMapper<Ticket>() {

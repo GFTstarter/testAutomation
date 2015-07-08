@@ -8,7 +8,7 @@ public interface TicketDao{
 	
 	void saveOrUpdate(Ticket obj);
 	Ticket getTicketByJira(String jira);
-	List<Ticket> findAllByReleaseId(Integer id_release);
+	List<Ticket> findAllByReleaseId(Long id_release);
 	void delete(Long id);
 	void updateColumnValue (Long id, String column,String value);
 }

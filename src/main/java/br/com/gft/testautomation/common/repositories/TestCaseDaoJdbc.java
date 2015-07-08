@@ -68,7 +68,7 @@ public class TestCaseDaoJdbc implements TestCaseDao {
 	@Override
 	public List<TestCases> findAllByTicketId(Long idTicket) {
 
-		String sql = "SELECT * FROM testcases WHERE id_ticket = ?";
+		String sql = "SELECT * FROM testcases WHERE id_ticket = ? order by id_task";
 		List<TestCases> listTestCases = jdbcTemplate.query(sql, new Object[] {idTicket}, new RowMapper<TestCases>() {
 			
 			@Override

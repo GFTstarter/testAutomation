@@ -46,7 +46,7 @@ public class ExportAllController {
 	 * Receive as parameters the release ID, the release tag, the release project,
 	 * a Map<String, Object> model and a request/response . */
 	@RequestMapping(value = "/getZip", method = RequestMethod.GET)
-	protected void generateZip(@RequestParam("id_release") Integer id_release,
+	protected void generateZip(@RequestParam("id_release") Long id_release,
 			@RequestParam("tag") String tag,
 			@RequestParam("project") String project,
 			Map<String, Object> model,			

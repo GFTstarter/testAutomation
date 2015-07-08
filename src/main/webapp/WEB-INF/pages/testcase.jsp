@@ -6,6 +6,7 @@
     <tiles:putAttribute name="body">
 		<!-- Main container -->
 		<div class="container">
+		<a name="alert"></a>
 			<div class="row">
 				<div>
 					<ol class="breadcrumb">
@@ -25,10 +26,12 @@
 				<input type="hidden" name="task_id" value="${task_id}" />
 		
 				<!-- Validation messages -->
+				
 				<c:if test="${param.msg != null}">
 					<div class="alert alert-danger" role="alert">The test case description must not be empty.</div>
 				</c:if>
-		
+				<div align="left" class="alert alert-danger" role="alert" id="opFailTestCaseResponse"></div>
+				<div align="left" class="alert alert-success" role="alert" id="opTestCaseResponse"></div>
 				<!-- Panel -->
 				<div id="body">
 					<div class="panel panel-default">
@@ -74,6 +77,7 @@
 						<div class="panel-body" >
 							<!-- Test cases table --> 
 							<table id="testCases" class="table table-hover table-striped">
+							
 								<thead>
 									<tr>
 										<th>Task ID</th>
@@ -84,7 +88,7 @@
 										<th>Description</th>
 										<th>Expected Results</th>
 										<th>Comments</th>
-										<th>Testcase ID</th>
+										<th id="tcId">Testcase ID</th>
 										<th></th>
 										<th></th>
 										<th></th>
@@ -93,67 +97,18 @@
 									</tr>
 								</thead>
 								<tbody>
-									<c:forEach var="testcase" items="${testCasesList}">
-										<tr>
-											<td class="testCaseTaskId"></td>
-											<td class="testCaseStatus">${testcase.status}</td>
-											<td class="testCaseTestedBy">${testcase.tested_by}</td>
-											<td class="testCaseTestedOn">${testcase.tested_on}</td>
-											<td class="testCasePreRequisite">${testcase.pre_requisite}</td>
-											<td class="testCaseDescription" style="width: 100px;">${testcase.testcase_description}</td>
-											<td class="testCaseResults">${testcase.results}</td>
-											<td class="testCaseComments">${testcase.comments}</td>
-											<td class="testCaseId">${testcase.testcase_id}</td>
-											<!-- Button order -->
-											<td><a title="Click to move up the row data" href="#"
-												class="moveup" data-toggle="modal"
-												data-id="${testcase.testcase_id}"> 
-												<span class="glyphicon glyphicon-chevron-up"></span>
-											</a>
-											<a title="Click to move down the row data" href="#"
-												class="movedown" data-toggle="modal"
-												data-id="${testcase.testcase_id}"> 
-												<span class="glyphicon glyphicon-chevron-down"></span>
-											</a></td>
-																												
-											<!-- Button edit -->
-											<td><a title="Click to edit the row data" href="#"
-												class="edit" data-toggle="modal"
-												data-id="${testcase.testcase_id}"> 
-												<span class="glyphicon glyphicon-pencil"></span>
-											</a></td>
-		
-											<!-- Button Reset Test -->
-											<td><a title="Click to Reset Tests field" href="#" class="reset"
-												data-toggle="modal" data-id="${testcase.testcase_id}">
-												 <span class="glyphicon glyphicon-refresh"></span>
-											</a></td>
-											
-											<!-- Button Play Test -->  
-											<td><a title="Click to Play Test" href=""
-													onclick="window.open('startTestsSelected?id_testcase=${testcase.testcase_id}&id_ticket=${testcase.id_ticket}&status=${testcase.status}&pre_requisite=${testcase.pre_requisite}&testcase_description=${testcase.testcase_description}&results=${testcase.results}&comments=${testcase.comments}&id_task=${testcase.task_id}', 'newwindow', 'width=450, height=650'); return false;"
-													class="play" data-id="${testcase.testcase_id}"> 
-												<span class="glyphicon glyphicon-play"></span>
-											</a></td>
-											
-											<!-- Button Delete -->
-											<td><a title="Click to delete" href="#" class="delete"
-												data-toggle="modal" data-id="${testcase.testcase_id}"> 
-												<span class="glyphicon glyphicon-remove"></span>
-											</a></td>
-										</tr>								
-									</c:forEach> 
 								</tbody>
 							</table>
-							
+							<a class="btn btn-primary" id="refresh">Refresh</a><a href="#alert" class="btn btn-primary" id="saveSort">Save</a>
 						</div>
 					</div>
-					<a class="btn btn-primary" id="saveSort">Save</a>
+					<!--  <a href="#alert" class="btn btn-primary btn-lg" id="saveSort">Save</a>-->
 					<div class="footer"></div>
 					
 					<!-- Add new testCase table -->
 					<h4>Add new Test Case</h4>
-					<form:form method="POST" commandName="testCase" action="testCases">
+					<!-- testCases -->
+					<form:form id="createTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/createTestCase.json">
 						<table id="addTestCases" class="table table-bordered">
 							<thead>
 								<tr>
@@ -203,14 +158,14 @@
 						   class="btn btn-primary">Back</a>
 		
 						<button type="submit" class="btn btn-primary newTestCase" id="buttonfloat">Add new Test Case</button>
-						<input type="hidden" name="id_ticket" value="${id_ticket}" />
-						<input type="hidden" name="td_description" value="${description}" />
-						<input type="hidden" name="td_tag" value="${tag}" />
-						<input type="hidden" name="td_environment" value="${environment}" />
-						<input type="hidden" name="td_developer" value="${developer}" />
-						<input type="hidden" name="td_tester" value="${tester}" />
-						<input type="hidden" name="td_run_time" value="${run_time}" />
-						<input type="hidden" name="td_jira" value="${jira}" />
+						<input type="" name="id_ticket" id="ticketId" value="${id_ticket}" />
+						<input type="" name="td_description" value="${description}" />
+						<input type="" name="td_tag" value="${tag}" />
+						<input type="" name="td_environment" value="${environment}" />
+						<input type="" name="td_developer" value="${developer}" />
+						<input type="" name="td_tester" value="${tester}" />
+						<input type="" name="td_run_time" value="${run_time}" />
+						<input type="" name="td_jira" value="${jira}" />
 					</form:form>
 				</div>
 		
@@ -278,16 +233,16 @@
 											cssClass="form-control" />
 									</div>
 		
-									<form:input path="testcase_id" type="" name="testcase_id" id="testcase_id" value="" />
-									<form:input path="task_id" type="" name="task_id" id="taskId" value="" />
-									<input type="" name="id_ticket" id="ticket_id" value="${id_ticket}" />
-								 	<input type="" name="tc_description" value="${description}" /> 
-									<input type="" name="tc_tag" value="${tag}" />
-									<input type="" name="tc_environment" value="${environment}" />
-									<input type="" name="tc_developer" value="${developer}" />
-									<input type="" name="tc_tester" value="${tester}" />
-									<input type="" name="tc_run_time" value="${run_time}" />
-									<input type="" name="tc_jira" value="${jira}" />
+									<form:input path="testcase_id" type="hidden" name="testcase_id" id="testcase_id" value="" />
+									<form:input path="task_id" type="hidden" name="task_id" id="taskId" value="" />
+									<input type="hidden" name="id_ticket" id="ticket_id" value="${id_ticket}" />
+								 	<input type="hidden" name="tc_description" value="${description}" /> 
+									<input type="hidden" name="tc_tag" value="${tag}" />
+									<input type="hidden" name="tc_environment" value="${environment}" />
+									<input type="hidden" name="tc_developer" value="${developer}" />
+									<input type="hidden" name="tc_tester" value="${tester}" />
+									<input type="hidden" name="tc_run_time" value="${run_time}" />
+									<input type="hidden" name="tc_jira" value="${jira}" />
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -371,14 +326,14 @@
 										</form:select>
 									</div>
 								</div>
-									<input type="" name="tb_status" id="status" value="${status}" />
-									<input type="" name="id_ticket" value="${id_ticket}" />
-									<input type="" name="tb_description" value="${description}" />
-									<input type="" name="tb_tag" value="${tag}" />
-									<input type="" name="tb_environment" value="${environment}" />
-									<input type="" name="tb_developer" value="${developer}" />
-									<input type="" name="tb_tester" value="${tester}" />
-									<input type="" name="tb_jira" value="${jira}" />
+									<input type="hidden" name="tb_status" id="status" value="${status}" />
+									<input type="hidden" name="id_ticket" value="${id_ticket}" />
+									<input type="hidden" name="tb_description" value="${description}" />
+									<input type="hidden" name="tb_tag" value="${tag}" />
+									<input type="hidden" name="tb_environment" value="${environment}" />
+									<input type="hidden" name="tb_developer" value="${developer}" />
+									<input type="hidden" name="tb_tester" value="${tester}" />
+									<input type="hidden" name="tb_jira" value="${jira}" />
 								</div>
 		
 								<div class="modal-footer">
@@ -403,19 +358,21 @@
 							</div>
 		
 							<div class="modal-body">You want to reset the test results?</div>
-		
-							<form:form method="POST" commandName="testCase" action="resetTestCase" role="form">
-								<input type="hidden" name="id_ticket" value="${id_ticket}" />
-								<input type="hidden" name="tf_description" value="${description}" />
-								<input type="hidden" name="tf_tag" value="${tag}" />
-								<input type="hidden" name="tf_environment" value="${environment}" />
-								<input type="hidden" name="tf_developer" value="${developer}" />
-								<input type="hidden" name="tf_tester" value="${tester}" />
-								<input type="hidden" name="tf_run_time" value="${run_time}" />
-								<input type="hidden" name="tf_jira" value="${jira}" />
+							<!-- resetTestCase -->
+							<form:form id="resetTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/resetTestCaseAjax.json" role="form">
+								<input type="" name="id_ticket" value="${id_ticket}" />
+								<input type="" name="tf_description" value="${description}" />
+								<input type="" name="tf_tag" value="${tag}" />
+								<input type="" name="tf_environment" value="${environment}" />
+								<input type="" name="tf_developer" value="${developer}" />
+								<input type="" name="tf_tester" value="${tester}" />
+								<input type="" name="tf_run_time" value="${run_time}" />
+								<input type="" name="tf_jira" value="${jira}" />
 		
 								<div class="modal-footer">
-									<input type="hidden" name="reset_testcase_id" id="reset_testcase_id" value="${id_ticket}" />
+									<input type="" name="reset_testcase_id" id="reset_testcase_id" value="" />
+									<input type="" name="reset_task_id" id="reset_task_id" value="" />
+									<input type="" name="reset_testcase_status" id="reset_testcase_status" value="" />
 									<button type="submit" class="btn btn-primary">Confirm</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 								</div>
@@ -474,8 +431,8 @@
 							</div>
 		
 							<div class="modal-body">Do you want to remove this record?</div>
-		
-							<form:form method="POST" commandName="testCase" action="deleteTestCase" role="form">
+							<!-- deleteTestCase -->
+							<form:form id="deleteTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/deleteTestCaseAjax.json" role="form">
 								<input type="hidden" name="id_ticket" value="${id_ticket}" />
 								<input type="hidden" name="te_description" value="${description}" />
 								<input type="hidden" name="te_tag" value="${tag}" />

@@ -208,7 +208,7 @@ public class ReleaseController{
 	}
 	
 	@RequestMapping(value = "/deleteRelease", method = RequestMethod.POST)
-	public String deleteRelease(@RequestParam("delete_id_release") Integer id){
+	public String deleteRelease(@RequestParam("delete_id_release") Long id){
 		
 		releaseDao.delete(id);
 		
@@ -219,7 +219,7 @@ public class ReleaseController{
 	@RequestMapping(value="/deleteReleaseAjax", method=RequestMethod.POST, 
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String deleteReleaseAjax(@RequestBody Integer id) {
+    public String deleteReleaseAjax(@RequestBody Long id) {
 		System.out.println("ID: " + id);
 		Integer status = 0;
 		List<Ticket> listTicket = ticketDao.findAllByReleaseId(id);

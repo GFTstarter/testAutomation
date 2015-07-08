@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 
 import br.com.gft.testautomation.common.login.LoginUtils;
+import br.com.gft.testautomation.common.model.Release;
 import br.com.gft.testautomation.common.model.TestCases;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.TestCaseDao;
@@ -159,7 +160,7 @@ public class TicketController {
 	@RequestMapping(value = "/ticketsList", method = RequestMethod.GET)
 	public ModelAndView initTicketPage(@RequestParam("project") String project,
 				@RequestParam("tag") String tag, 
-				@RequestParam("id_release") Integer id_release,
+				@RequestParam("id_release") Long id_release,
 				ModelMap model) {
 		
 		/* As the pages redirects itself after editing any information, these conditions
@@ -192,18 +193,19 @@ public class TicketController {
 	}	
 	
 	
-	//AJAX-NOT-BEING-USED
-	@RequestMapping(value="/ticketsListtAjax", method=RequestMethod.GET,
+	//AJAX to load tickets DataTable
+	@RequestMapping(value="/ticketsListAjax", method=RequestMethod.GET,
     		produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String getReleaseList(@RequestParam("id_release") Integer id_release) {
+	public String getReleaseList(@RequestBody @RequestParam("id_release") Long id_release) {
 	
-	System.out.println("idRelease: " + id_release);	
-	List<Ticket> data = ticketDao.findAllByReleaseId(id_release);
-	String jsonData = new Gson().toJson(data);
-	System.out.println("Json: " + jsonData);
-	
-	return jsonData;
+		System.out.println("idRelease: " + id_release);	
+		List<Ticket> data = ticketDao.findAllByReleaseId(id_release);
+		
+		String jsonData = new Gson().toJson(data);
+		System.out.println("Json: " + jsonData);
+		
+		return jsonData;
 	}
 
 	
@@ -384,7 +386,7 @@ public class TicketController {
 	 * receiving the parameters that also will be sent to the next page.  */
 	@RequestMapping(value = "/refreshTicket", method = RequestMethod.GET)
 	public String refreshPage(@RequestParam("project") String project, @RequestParam("tag") String tag, 
-								@RequestParam("id_release") Integer id_release){
+								@RequestParam("id_release") Long id_release){
 		
 		List<Ticket> ticketList = ticketDao.findAllByReleaseId(id_release);
 		
@@ -441,14 +443,65 @@ public class TicketController {
 		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
 	}
 	
+	
+	//Controller that receives an AJAX call to EDIT a ticket registry
+	@RequestMapping(value="/editTicketAjax", method=RequestMethod.POST, 
+			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String editTicketAjax(@RequestBody Ticket ticket, BindingResult result) {
+		
+		Integer status = 0;
+		
+		/* Validate the Release object and return a BindingResult object */
+		ticketValidator.validate(ticket, result);
+		
+		/* If the BindingResult object has errors: set status variable to 1 and 
+		 * javascript will get this response and show a notification to the user */
+		if(result.hasErrors()){
+			status = 1;
+		}else{
+			try {
+				ticketDao.saveOrUpdate(ticket);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
+		}	
+		return "{\"status\":"+status+"}";
+	}
+		
 	//Delete info
-		@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
-			public String deleteTicket(@RequestParam("delete_id_ticket") Long id) {
-			
-				ticketDao.delete(id);
-			
-			return "redirect:ticketsList";
+	@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
+		public String deleteTicket(@RequestParam("delete_id_ticket") Long id) {
+		
+		List<TestCases> listTestCase = testCaseDao.findAllByTicketId(id);
+		if(listTestCase.size() > 0){
+			return "redirect:ticketsList?emsg=true";
 		}
+		else{
+			ticketDao.delete(id);
+			return "redirect:ticketsList";
+
+		}
+	}
+	
+	//Controller that receives an AJAX call to DELETE a ticket registry
+	@RequestMapping(value="/deleteTicketAjax", method=RequestMethod.POST, 
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String deleteTicketAjax(@RequestBody Long id) {
+		System.out.println("ID: " + id);
+		Integer status = 0;
+		
+		List<TestCases> listTestCase = testCaseDao.findAllByTicketId(id);
+		//Check if the ticket has test cases assigned to it, if so it can not be deleted
+		if(listTestCase.size() > 0){
+			status = 1;
+		}
+		else
+			ticketDao.delete(id);
+		
+        return "{\"status\":"+status+"}";
+    }
 	/** Map the URL back on GET method.
 	 * If the user hits the back button on the end of the page, the session will be erased,
 	 * so this way the attributes Project and Tag don't pass to another page.

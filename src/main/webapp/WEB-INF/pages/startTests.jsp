@@ -35,8 +35,6 @@
 									href="startTestsSelected?id_testcase=${testcase.testcase_id}&id_ticket=${testcase.id_ticket}&status=${testcase.status}&pre_requisite=${testcase.pre_requisite}&testcase_description=${testcase.testcase_description}&results=${testcase.results}&comments=${testcase.comments}&id_task=${testcase.task_id}">
 										<span class="glyphicon glyphicon-play"></span>
 								</a></td>
-								</tr>
-			
 							</c:forEach>
 						</tbody>
 					</table>

@@ -8,5 +8,5 @@ public interface ReleaseDao{
 	
 	List<Release> findAll();
 	void saveOrUpdate(Release obj);
-	void delete(Integer id);
+	void delete(Long id);
 }
