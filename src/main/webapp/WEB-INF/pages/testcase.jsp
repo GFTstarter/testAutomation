@@ -158,14 +158,14 @@
 						   class="btn btn-primary">Back</a>
 		
 						<button type="submit" class="btn btn-primary newTestCase" id="buttonfloat">Add new Test Case</button>
-						<input type="" name="id_ticket" id="ticketId" value="${id_ticket}" />
-						<input type="" name="td_description" value="${description}" />
-						<input type="" name="td_tag" value="${tag}" />
-						<input type="" name="td_environment" value="${environment}" />
-						<input type="" name="td_developer" value="${developer}" />
-						<input type="" name="td_tester" value="${tester}" />
-						<input type="" name="td_run_time" value="${run_time}" />
-						<input type="" name="td_jira" value="${jira}" />
+						<input type="hidden" name="id_ticket" id="ticketId" value="${id_ticket}" />
+						<input type="hidden" name="td_description" value="${description}" />
+						<input type="hidden" name="td_tag" value="${tag}" />
+						<input type="hidden" name="td_environment" value="${environment}" />
+						<input type="hidden" name="td_developer" value="${developer}" />
+						<input type="hidden" name="td_tester" value="${tester}" />
+						<input type="hidden" name="td_run_time" value="${run_time}" />
+						<input type="hidden" name="td_jira" value="${jira}" />
 					</form:form>
 				</div>
 		
@@ -360,19 +360,19 @@
 							<div class="modal-body">You want to reset the test results?</div>
 							<!-- resetTestCase -->
 							<form:form id="resetTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/resetTestCaseAjax.json" role="form">
-								<input type="" name="id_ticket" value="${id_ticket}" />
-								<input type="" name="tf_description" value="${description}" />
-								<input type="" name="tf_tag" value="${tag}" />
-								<input type="" name="tf_environment" value="${environment}" />
-								<input type="" name="tf_developer" value="${developer}" />
-								<input type="" name="tf_tester" value="${tester}" />
-								<input type="" name="tf_run_time" value="${run_time}" />
-								<input type="" name="tf_jira" value="${jira}" />
+								<input type="hidden" name="id_ticket" value="${id_ticket}" />
+								<input type="hidden" name="tf_description" value="${description}" />
+								<input type="hidden" name="tf_tag" value="${tag}" />
+								<input type="hidden" name="tf_environment" value="${environment}" />
+								<input type="hidden" name="tf_developer" value="${developer}" />
+								<input type="hidden" name="tf_tester" value="${tester}" />
+								<input type="hidden" name="tf_run_time" value="${run_time}" />
+								<input type="hidden" name="tf_jira" value="${jira}" />
 		
 								<div class="modal-footer">
-									<input type="" name="reset_testcase_id" id="reset_testcase_id" value="" />
-									<input type="" name="reset_task_id" id="reset_task_id" value="" />
-									<input type="" name="reset_testcase_status" id="reset_testcase_status" value="" />
+									<input type="hidden" name="reset_testcase_id" id="reset_testcase_id" value="" />
+									<input type="hidden" name="reset_task_id" id="reset_task_id" value="" />
+									<input type="hidden" name="reset_testcase_status" id="reset_testcase_status" value="" />
 									<button type="submit" class="btn btn-primary">Confirm</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 								</div>

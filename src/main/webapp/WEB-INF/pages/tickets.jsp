@@ -147,7 +147,7 @@
 								<form:input type="hidden" cssClass="form-control" path="id_release" name="id_release" id="id_release" value="${id_release}" /> 
 								<input type="hidden" name="project" id="project" value="${project}" /> 
 								<input type="hidden" name="tag" id="tag" value="${tag}" /> 
-								<form:input type="" cssClass="form-control" path="id_ticket" name="id_ticket" id="id_ticket" value="${id_ticket}" />
+								<form:input type="hidden" cssClass="form-control" path="id_ticket" name="id_ticket" id="id_ticket" value="${id_ticket}" />
 							</div>
 		
 							<div class="modal-footer">
@@ -175,7 +175,7 @@
 						<form:form id="deleteTicket" method="POST" commandName="ticket" action="${pageContext.request.contextPath}/deleteTicketAjax.json"
 							role="form">
 							<div class="modal-footer">
-								<input type="" name="delete_id_ticket" id="delete_id_ticket" value="${ticketId}" />
+								<input type="hidden" name="delete_id_ticket" id="delete_id_ticket" value="${ticketId}" />
 								<button type="submit" class="btn btn-danger">Confirm</button>
 								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>

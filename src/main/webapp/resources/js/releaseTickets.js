@@ -1,6 +1,7 @@
 /* Functions to be ready at page load */
 $(document).ready(function() {
 	
+	//TODO: Add comments to the code.
 	$("#opFailTicketResponse" ).toggle();
 	$("#validationAlert" ).toggle();
 	var idRelease = $("#idRelease").val();

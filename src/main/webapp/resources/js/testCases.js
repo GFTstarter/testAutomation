@@ -8,9 +8,6 @@ $(document).ready(function() {
 	
 	console.log("ticketId: " + ticketId);
 	
-	//TODO: Selector to add class "form-control input-sm" on search input
-	//$('input[@type=search]').val('Test');
-	
 	/*For new API function must be .DataTable({}); with D on upCase 
 	 *For old API function must be .dataTable({}); with d on downCase*/
 	oTable = $('#testCases').dataTable({
@@ -48,9 +45,6 @@ $(document).ready(function() {
 			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to Play Test" href="#" onclick="window.open(\'startTestsSelected?id_testcase='+full.id_testcase+'&id_ticket='+full.id_ticket+'&status='+full.status+'&pre_requisite='+full.pre_requisite+'&testcase_description='+full.testcase_description+'&results='+full.results+'&comments='+full.comments+'&id_task='+full.id_task+'\', \'newwindow\', \'width=450, height=650\'); return false;" class="play" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-play"></span> </a>'; }},
 			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to delete" href="#" class="delete" data-toggle="modal" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-remove"></span> </a>'; }}
 		]
-		/*"aoColumnDefs": [
-            { "bVisible": false,  "aTargets": [8] }
-	    ]*/
 		/*"scrollY" : "750px",
 		"scrollX" : false,
 		"scrollCollapse" : true,
@@ -58,6 +52,21 @@ $(document).ready(function() {
 		"paging" : false*/
 	});
 	
+	/*Toggle column visibility on/off by click
+	* 
+	* 
+	function fnShowHide( iCol )
+	{
+		var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+    	oTable.fnSetColumnVis( iCol, bVis ? false : true );
+    }
+    *
+    *
+    */
+	
+	/*Set column id_testcase to invisible*/
+    oTable.fnSetColumnVis( 8, false );
+    
 	$('#deleteTestCase').submit(function(event){
 		
 		var idTestCase = $('#delete_testcase_id').val();
@@ -226,13 +235,12 @@ $(document).ready(function() {
 		$(this).html(cont++);
 	});*/
     
-/*$('#testCases tbody').on( 'click', 'tr', function(){
-	var aPos = oTable.fnGetPosition(this);
-	console.dir('THIS: ' +  this );	
-	console.log('INDEX: ' +  aPos );	
-	moverow(aPos);
-});*/
-	
+	/*$('#testCases tbody').on( 'click', 'tr', function(){
+		var aPos = oTable.fnGetPosition(this);
+		console.dir('THIS: ' +  this );	
+		console.log('INDEX: ' +  aPos );	
+		moverow(aPos);
+	});*/
 	
 	// Initialize your table
     //var oTable = $('#testCases').DataTable();
@@ -242,7 +250,6 @@ $(document).ready(function() {
 	 * var data = table.rows().data();
 	 * var rows = data.length*/
  
-    
     // Get value Task ID
 	$('#refresh').click(function() {
 		console.log("Updating");
@@ -518,15 +525,6 @@ $(document).on('click', 'a.reset', function() {
 	$(".modal-footer #reset_task_id").val(taskId);
 	$(".modal-footer #reset_testcase_status").val(testCaseStatus);
 });
-
-/* NOT BEING USED - Function to open "Play tests" modal on click */
-/*$(document).on('click', 'a.play', function() {
-	$('#playModal').modal('show');
-
-	var id_ticket = $(this).data('id');
-
-	$(".modal-footer #play_testcase_id").val(id_ticket);
-});*/
 
 /* Function to "Delete Ticket" modal on click */
 $(document).on('click', 'a.delete', function() {
