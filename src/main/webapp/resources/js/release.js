@@ -26,7 +26,7 @@ $(document).ready(function() {
 				$('#deleteModal').modal('hide');
 				if(d.status == 1){
 					console.log("Falha");
-					$("#opFailReleaseResponse" ).toggle();
+					$("#opFailReleaseResponse").toggle();
 					$("#opFailReleaseResponse").html("<b>Can not be deleted. This release has tickets assigned to it.</b>").delay(2500).fadeOut()
 				}
 				oTable.ajax.reload();

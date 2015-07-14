@@ -24,9 +24,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 
 import br.com.gft.testautomation.common.login.LoginUtils;
-import br.com.gft.testautomation.common.model.Release;
+import br.com.gft.testautomation.common.model.Parameter;
 import br.com.gft.testautomation.common.model.TestCases;
 import br.com.gft.testautomation.common.model.Ticket;
+import br.com.gft.testautomation.common.repositories.ParameterDao;
 import br.com.gft.testautomation.common.repositories.TestCaseDao;
 import br.com.gft.testautomation.common.repositories.TicketDao;
 import br.com.gft.testautomation.common.validator.TicketValidator;
@@ -50,6 +51,10 @@ public class TicketController {
 	/*Autowires the TestCasesDaoImpl bean*/
 	@Autowired
 	private TestCaseDao testCaseDao;
+	
+	/* Autowires the ParameterDaoImpl bean */
+	@Autowired
+	private ParameterDao parameterDao;
 	
 	/* Creates a instance of ReleaseValidator class */
 	TicketValidator ticketValidator;
@@ -87,6 +92,7 @@ public class TicketController {
         return "tickets";
     }
 	
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/addTicket", method = RequestMethod.POST)
 	public String releaseFormSubmit(@ModelAttribute("ticket") Ticket ticket, BindingResult result,
 			@RequestParam("project") String project,
@@ -157,15 +163,16 @@ public class TicketController {
 	 * Receive as the parameters from the previous page: release project, release tag and and
 	 * id release. These parameters are received to properly show to the user that they are
 	 * accessing the correct page. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/ticketsList", method = RequestMethod.GET)
 	public ModelAndView initTicketPage(@RequestParam("project") String project,
 				@RequestParam("tag") String tag, 
 				@RequestParam("id_release") Long id_release,
 				ModelMap model) {
 		
-		/* As the pages redirects itself after editing any information, these conditions
-		 * below test if the attribute hasn`t been setted to the model yet. If they hasn`t, 
-		 * they will be setted. */
+		/*These conditions set back the attributes of the session, because they are cleared when the controller mapped 
+		 * as /getList from ReleaseController is called and also when the back button is pressed. This way these informations
+		 * can still be used throughout the views*/
 		if(!model.containsAttribute("project")){
 			model.addAttribute("project", project);
 		}
@@ -174,6 +181,11 @@ public class TicketController {
 		}
 		if(!model.containsAttribute("id_release")){
 			model.addAttribute("id_release", id_release);
+		}
+		if(!model.containsAttribute("parameter")){
+			Parameter param = new Parameter();
+			param = parameterDao.findParameterById(1);
+			model.addAttribute("parameter", param);
 		}
 		
 		/* Add the logged in user to show on the page */
@@ -384,6 +396,7 @@ public class TicketController {
 	/** Map the refreshTicket URL on GET method.
 	 * Properly refresh all the information that will be displayed on the next page,
 	 * receiving the parameters that also will be sent to the next page.  */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/refreshTicket", method = RequestMethod.GET)
 	public String refreshPage(@RequestParam("project") String project, @RequestParam("tag") String tag, 
 								@RequestParam("id_release") Long id_release){
@@ -420,6 +433,7 @@ public class TicketController {
 	 * Receive as parameters the following attributes to be edited: ticket developer,
 	 * ticket tester and ticket status. The others parameters are used to properly redirect
 	 * the page after the edit happens. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/updateTicket", method = RequestMethod.POST)
 	public String updateTicket(@ModelAttribute("project") String project,
 			@ModelAttribute("tag") String tag,
@@ -470,6 +484,7 @@ public class TicketController {
 	}
 		
 	//Delete info
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
 		public String deleteTicket(@RequestParam("delete_id_ticket") Long id) {
 		

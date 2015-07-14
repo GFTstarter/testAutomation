@@ -230,22 +230,23 @@ $(document).ready(function() {
 
 	/* TaskId column initialize with a hardcoded conter to fixe display problems on first load.	
 	 * (it will always be sequencial)
-	var cont = 1;
-	$("#testCases .testCaseTaskId").each(function(){
-		$(this).html(cont++);
+		var cont = 1;
+		$("#testCases .testCaseTaskId").each(function(){
+			$(this).html(cont++);
 	});*/
     
-	/*$('#testCases tbody').on( 'click', 'tr', function(){
+	/*FUNCTION THAT HANDLE CLICK EVENT ON EACH ROW OF THE TABLE
+	 * $('#testCases tbody').on( 'click', 'tr', function(){
 		var aPos = oTable.fnGetPosition(this);
 		console.dir('THIS: ' +  this );	
 		console.log('INDEX: ' +  aPos );	
 		moverow(aPos);
 	});*/
 	
-	// Initialize your table
+	//Initialize your table
     //var oTable = $('#testCases').DataTable();
     
-    // Get the length
+    // Get the table's lenght
 	/*For new API: 
 	 * var data = table.rows().data();
 	 * var rows = data.length*/
@@ -274,8 +275,6 @@ $(document).on('click', '.newTestCase', function(e){
 	id.value = rows + 1;
 });
 
-
-
 /***********JQUERY SORTABLE******************/
 
 
@@ -291,6 +290,8 @@ $(document).on('click', '.moveup', function(e){
 	
 	if ((index-1) >= 0){
     	
+		/*Resposable for changing for visually changing the rows of the table
+		 * splice() method changes the content of an array, adding new elements while removing old elements.*/
 		var data = oTable.fnGetData();
         oTable.fnClearTable();
         data.splice((index-1), 0, data.splice(index,1)[0]);
@@ -412,7 +413,7 @@ function updateSort(json){
     });
 }
 
-/*OLD API*/
+/*OLD API-NOT-BEING-USED*/
 function moverow(index){
 	console.log('moveup');
 	
@@ -445,38 +446,12 @@ function moverow(index){
     }
 }
 
-/*********ODL API******
-$(document).on('click', '.moveup', function(e){
-	console.log('moveup');
-    var index = $(this).attr('index');
-    console.log('This: ' + this);
-    if ((index-1) >= 0){
-        //var datatable = $('#datatable.table').dataTable()
-        var data = oTable.fnGetData();
-        console.log('Data: ' + data);
-        oTable.fnClearTable();
-        data.splice((index-1), 0, data.splice(index,1)[0]);
-        oTable.fnAddData(data);
-    }
-    
-});
-$(document).on('click', '.movedown', function(e){
-	console.log('movedown');
-    var index = $(this).attr('index');
-    if ((index+1) >= 0) {
-        //var datatable = $('#datatable.table').dataTable()
-        var data = oTable.fnGetData();
-        oTable.fnClearTable();
-        data.splice((index+1), 0, data.splice(index,1)[0]);
-        oTable.fnAddData(data);
-    }
-});
-*/
-
 /* Function to open "Edit Test Case" modal on click */
 $(document).on('click', 'a.edit', function() {
 	$('#editModal').modal('show');
 
+	/*Get data from the table rendered finding the colosest tr (row) and then selecting each data
+	 * by the cell's column with the eq(x) selector*/
 	var taskId = $(this).closest('tr').find('td:eq(0)').html();
 	var testCaseStatus = $(this).closest('tr').find('td:eq(1)').html();
 	var testCaseTestedBy = $(this).closest('tr').find('td:eq(2)').html();
@@ -488,6 +463,8 @@ $(document).on('click', 'a.edit', function() {
 	var testCaseId = $(this).closest('tr').find('td:eq(8)').html();
 
 	console.log("TAKSID: " + taskId);
+	
+	/*Add to the modal the values get from the rendered table*/
 	$(".modal-body #testcase_id").val(testCaseId);
 	$(".modal-body #taskId").val(taskId);
 	$(".modal-body #testCaseStatus").val(testCaseStatus);

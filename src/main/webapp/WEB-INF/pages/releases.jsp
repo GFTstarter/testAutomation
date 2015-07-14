@@ -24,8 +24,8 @@
 					<div class="alert alert-danger" role="alert">All fields must not be empty.</div>
 				</c:if>
 		
-				<div class="alert alert-success" role="alert" id="addReleaseResponse"></div>
-				<div align="left" class="alert alert-danger" role="alert" id="opFailReleaseResponse"></div>
+				<div align="center" class="alert alert-success col-md-12" role="alert" id="addReleaseResponse"></div>
+				<div align="center" class="alert alert-danger col-md-12" role="alert" id="opFailReleaseResponse"></div>
 				<!-- Releases table -->
 				<table id="releases" class="table table-hover table-striped">
 					 <thead>

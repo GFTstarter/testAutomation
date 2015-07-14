@@ -104,8 +104,8 @@ $(document).ready(function() {
 	            
 	            if(d.status == 1){
 					console.log("Falha");
-					$("#opFailReleaseResponse" ).toggle();
-					$("#opFailReleaseResponse").html("<b>All filed must not be empty.</b>").delay(2500).fadeOut()
+					$("#opFailTicketResponse" ).toggle();
+					$("#opFailTicketResponse").html("<b>All filed must not be empty.</b>").delay(2500).fadeOut()
 				}           
 	            $('#addModal').modal('hide');
 	            

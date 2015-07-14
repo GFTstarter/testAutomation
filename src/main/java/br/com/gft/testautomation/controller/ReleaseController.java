@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 
 import br.com.gft.testautomation.common.login.LoginUtils;
+import br.com.gft.testautomation.common.model.Parameter;
 import br.com.gft.testautomation.common.model.Release;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.ParameterDao;
@@ -63,13 +64,20 @@ public class ReleaseController{
 	
 	/** Map the URL getList on GET method.
 	 * Prepares the releases.jsp page to be properly displayed with the list of Releases. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/getList", method = RequestMethod.GET)
 	public ModelAndView getReleaseList(ModelMap model, SessionStatus status){
 		
-		/* Empty all the attributes from the session */
-		/* Cleaning operation of the session's attributes removed, to keep application's parameters
-		 * throughout the views.*/
-		//status.setComplete(); 
+		/* Empty all the attributes from the session when release view is loaded. This way
+		 * it prevents old values of the session to be used on new calls*/
+		status.setComplete(); 
+		
+		/*
+		Parameter param = new Parameter();
+		param = parameterDao.findParameterById(1);
+		System.out.println("Project_name: " + param.getProject_name() 
+					+ " - importXMLButton: " + param.getImportJIRAxmlButton());
+		model.addAttribute("parameter", param);*/
 		
 		/* Add an object to the model attribute */
 		model.addAttribute("release", new Release());
@@ -105,6 +113,7 @@ public class ReleaseController{
 	/** Map the URL addRelease on POST method. 
 	 * Receives the Release object from the form on the modal, and a BindingResult object
 	 * to validate the information submitted. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/addRelease", method = RequestMethod.POST)
 	public String releaseFormSubmit(@ModelAttribute("release") Release release, BindingResult result){
 		
@@ -161,6 +170,7 @@ public class ReleaseController{
 	
 	/** Map the URL editRelease, that comes from a modal, on the POST method.
 	 * Receives the necessary parameters to update the Release of that row. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/editRelease", method = RequestMethod.POST)
 	public String editRelease(@ModelAttribute("release") Release release, BindingResult result){
 		
@@ -207,6 +217,7 @@ public class ReleaseController{
 		return "{\"status\":"+status+"}";
 	}
 	
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/deleteRelease", method = RequestMethod.POST)
 	public String deleteRelease(@RequestParam("delete_id_release") Long id){
 		

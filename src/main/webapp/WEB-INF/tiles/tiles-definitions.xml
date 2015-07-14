@@ -69,4 +69,23 @@
         </put-list-attribute>
     </definition>
     
+    
+    <definition name="importxmlTemplate" extends="defaultTemplate">
+		<put-list-attribute name="jsList" cascade="true"  inherit="true">
+        	<add-attribute value="/resources/js/importxml.js"/>
+        </put-list-attribute>
+        <put-list-attribute name="cssList" cascade="true" inherit="true">
+        </put-list-attribute>
+    </definition>
+    
+    
+    <definition name="changereleaseTemplate" extends="defaultTemplate">
+		<put-list-attribute name="jsList" cascade="true"  inherit="true">
+        </put-list-attribute>
+        <put-list-attribute name="cssList" cascade="true" inherit="true">
+        </put-list-attribute>
+    </definition>
+    
+    
+    
 </tiles-definitions>

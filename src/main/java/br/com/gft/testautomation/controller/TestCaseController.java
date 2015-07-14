@@ -63,6 +63,7 @@ public class TestCaseController {
         return jsonData;
     }
 	
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/testCases", method = RequestMethod.GET)
 	public ModelAndView initTestCasesPage(@RequestParam("description") String description,
 			@ModelAttribute("tag") String tag,
@@ -163,6 +164,7 @@ public class TestCaseController {
 	 * add a new Test Case using the form on the end of the page.
 	 * Receives the same parameters as URL testCases on GET method, but also receives the 
 	 * new TestCases object containing the data about to be inserted. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/testCases", method = RequestMethod.POST)
 	public String addTestCase(@RequestBody @RequestParam("td_description") String description,
 			@ModelAttribute("tag") String tag,
@@ -197,6 +199,7 @@ public class TestCaseController {
 	 * testcase id used by the update method, and the parameters ticket id, tag,
 	 * ticket description, ticket developer, ticket tester and ticket environment to properly
 	 * redirect the page after edit. */
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "updateTestCases", method = RequestMethod.POST)
 	public String updateTestCase(@RequestParam("testcase_id") Integer testcase_id,
 			@RequestParam("status") String status,
@@ -329,6 +332,7 @@ public class TestCaseController {
 	}
 	
 	// Map the resetTestCase on POST method.
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/resetTestCase", method = RequestMethod.POST)
 	public String resetTestCase(@ModelAttribute("reset_testcase_id") Long id,
 			@ModelAttribute("id_ticket") Integer id_ticket,
@@ -420,6 +424,7 @@ public class TestCaseController {
 	}
 			
 	// Map the deleteTestCases on POST method.
+	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/deleteTestCase", method = RequestMethod.POST)
 	public String deleteTestCase(@ModelAttribute("delete_testcase_id") Long id,
 			@ModelAttribute("id_ticket") Integer id_ticket,

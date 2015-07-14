@@ -28,10 +28,10 @@
 				<!-- Validation messages -->
 				
 				<c:if test="${param.msg != null}">
-					<div class="alert alert-danger" role="alert">The test case description must not be empty.</div>
+					<div align="center" class="alert alert-danger col-md-12" role="alert">The test case description must not be empty.</div>
 				</c:if>
-				<div align="left" class="alert alert-danger" role="alert" id="opFailTestCaseResponse"></div>
-				<div align="left" class="alert alert-success" role="alert" id="opTestCaseResponse"></div>
+				<div align="center" class="alert alert-danger col-md-12" role="alert" id="opFailTestCaseResponse"></div>
+				<div align="center" class="alert alert-success col-md-12" role="alert" id="opTestCaseResponse"></div>
 				<!-- Panel -->
 				<div id="body">
 					<div class="panel panel-default">

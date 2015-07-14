@@ -43,14 +43,14 @@
 		
 				<!-- Messages -->
 				<c:if test="${param.smsg != null}">
-					<div class="alert alert-success" role="alert">Tickets have been	transfered successfully.</div>
+					<div align="center" class="alert alert-success col-md-12" role="alert">Tickets have been	transfered successfully.</div>
 				</c:if>
 				<c:if test="${param.emsg != null}">
-					<div class="alert alert-danger" role="alert">Can't be deleted. This ticket has test cases assigned to it.</div>
+					<div align="center" class="alert alert-danger col-md-12" role="alert">Can't be deleted. This ticket has test cases assigned to it.</div>
 				</c:if>
 				<!-- Validation messages -->
-				<div id="validationAlert" class="alert alert-danger" role="alert">${param.msg != null}</div>
-				<div id="opFailTicketResponse" class="alert alert-danger" role="alert"></div>
+				<div align="center" id="validationAlert" class="alert alert-danger col-md-12" role="alert">${param.msg != null}</div>
+				<div align="center" id="opFailTicketResponse" class="alert alert-danger col-md-12" role="alert"></div>
 		
 				<!-- Ticket tables -->
 				<table id="table_id" class="table table-hover table-striped">
