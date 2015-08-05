@@ -144,8 +144,8 @@ $(document).ready(function() {
 	        	
 	        	 if(d.status == 1){
 						console.log("Falha");
-						$("#opFailReleaseResponse" ).toggle();
-						$("#opFailReleaseResponse").html("<b>All fields must not be empty.</b>").delay(5000).fadeOut()
+						$("#opFailTicketResponse" ).toggle();
+						$("#opFailTicketResponse").html("<b>All fields must not be empty.</b>").delay(5000).fadeOut()
 					}    
 	          	           
 	            $('#editModal').modal('hide');

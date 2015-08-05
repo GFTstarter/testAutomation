@@ -95,6 +95,7 @@
 	<!-- Validator beans -->
 	<bean class="br.com.gft.testautomation.common.validator.ReleaseValidator" />
 	<bean class="br.com.gft.testautomation.common.validator.TicketValidator" />
+	<bean class="br.com.gft.testautomation.common.validator.TestCaseValidator" />
 	
 	<!-- Multipart Resolver beans -->
 	<bean id="multipartResolver"

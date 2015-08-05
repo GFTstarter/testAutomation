@@ -67,7 +67,7 @@
 						</c:forEach>
 					</tbody> -->
 				</table>
-				<a href="#" class="btn btn-primary" id="refresh">Refresh</a>
+				<!-- <a href="#" class="btn btn-primary" id="refresh">Refresh</a>  -->
 			</div>
 		</div>
 		

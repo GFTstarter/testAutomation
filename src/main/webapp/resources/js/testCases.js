@@ -41,16 +41,28 @@ $(document).ready(function() {
 			//mRender: This property is the rendering partner to mData and it is suggested that when you want to manipulate data for display but not altering the underlying data for the table, use this property.
 			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to move up the row data" href="#" class="moveup" data-toggle="modal" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-chevron-up"></span> </a> <a title="Click to move down the row data" href="#" class="movedown" data-toggle="modal" data-id="'+full.testcase_id+'"> <span class="glyphicon glyphicon-chevron-down"></span> </a>'; }},
 			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to edit the row data" href="#" class="edit" data-toggle="modal" data-id="'+full.id_task+'"> <span class="glyphicon glyphicon-pencil"></span> </a>'; }},
-			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to Reset Tests field" href="#" class="reset" data-toggle="modal" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-refresh"></span> </a>'; }},
-			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to Play Test" href="#" onclick="window.open(\'startTestsSelected?id_testcase='+full.id_testcase+'&id_ticket='+full.id_ticket+'&status='+full.status+'&pre_requisite='+full.pre_requisite+'&testcase_description='+full.testcase_description+'&results='+full.results+'&comments='+full.comments+'&id_task='+full.id_task+'\', \'newwindow\', \'width=450, height=650\'); return false;" class="play" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-play"></span> </a>'; }},
+			//{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to Reset Tests field" href="#" class="reset" data-toggle="modal" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-refresh"></span> </a>'; }},
+			//{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to Play Test" href="#" onclick="window.open(\'startTestsSelected?id_testcase='+full.id_testcase+'&id_ticket='+full.id_ticket+'&status='+full.status+'&pre_requisite='+full.pre_requisite+'&testcase_description='+full.testcase_description+'&results='+full.results+'&comments='+full.comments+'&id_task='+full.id_task+'\', \'newwindow\', \'width=450, height=650\'); return false;" class="play" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-play"></span> </a>'; }},
 			{ sortable:false, mRender: function (data, type, full) {return '<a title="Click to delete" href="#" class="delete" data-toggle="modal" data-id="'+full.id_testcase+'"> <span class="glyphicon glyphicon-remove"></span> </a>'; }}
+		],
+		"aoColumnDefs": [
 		]
+	    
 		/*"scrollY" : "750px",
 		"scrollX" : false,
 		"scrollCollapse" : true,
 		"info" : false,
 		"paging" : false*/
 	});
+	
+	$('#testCases tbody').on('click', 'tr', function(){
+		 globalPos = oTable.fnGetPosition(this);
+		 console.log("position: " + globalPos);
+		 var idtestcase = oTable.fnGetData()[globalPos].id_testcase; 
+		 console.log("IDtestcase: " + idtestcase);
+		 
+		 testCaseId = idtestcase;
+	 });
 	
 	/*Toggle column visibility on/off by click
 	* 
@@ -106,8 +118,11 @@ $(document).ready(function() {
 		var testCaseResults = $('#testCaseResults').val();
 		var testCaseComments = $('#testCaseComments').val();
 		
+		console.log("TestCaseID: " + testCaseId);
+		
 		var json = {"task_id": testCaseTaskId, "testcase_id": testCaseId, "status": testCaseStatus, "tested_by": testCaseTestedBy, "tested_on": testCaseTestedOn, "pre_requisite": testCasePreRequisite, "testcase_description": testCaseDescription, "results": testCaseResults, "comments": testCaseComments};
-	    
+		console.log(JSON.stringify(json));
+		
 		$.ajax({
 	    	url: $("#editTestCase").attr( "action"),
 	        data: JSON.stringify(json),
@@ -143,8 +158,12 @@ $(document).ready(function() {
 		var testCaseId = $('#reset_testcase_id').val();
 		var testCaseTaskId = $('#reset_task_id').val();
 		var testCaseStatus = $('#reset_testcase_status').val();
+		var testCasePre_requisite = $('#reset_pre_requisite').val();
+		var testCaseDescription = $('#reset_description').val();
+		var testCaseResults = $('#reset_results').val();
+		var testCaseComments = $('#reset_comments').val();
 		
-		var json = {"task_id": testCaseTaskId, "testcase_id": testCaseId, "status": testCaseStatus, "tested_by": "", "tested_on": "", "pre_requisite": "", "testcase_description": "", "results": "", "comments": ""};
+		var json = {"task_id": testCaseTaskId, "testcase_id": testCaseId, "status": "", "tested_by": "", "tested_on": "", "pre_requisite": testCasePre_requisite, "testcase_description": testCaseDescription, "results": testCaseResults, "comments": testCaseComments};
 	    
 		$.ajax({
 	    	url: $("#editTestCase").attr( "action"),
@@ -172,9 +191,44 @@ $(document).ready(function() {
 		event.preventDefault();
 	});
 	
+	
+	$('#resetAllTestCase').click(function() {       
+		var json;
+		var testCaseTaskId = 0;
+		console.log('ResetAll');
+		
+		var rows = oTable.fnSettings().fnRecordsTotal();
+		console.log("Rows: " + rows );
+		
+		for(var x=0; x<rows; x++){
+			/*fnGetData(row number)[index value] is used the data of each row throught the for execution
+			 * and access the array position the data individually*/
+			var testCaseTaskId = oTable.fnGetData(x).id_task;
+			var testCaseTicketId = oTable.fnGetData(x).id_ticket;
+			var testCaseStatus = oTable.fnGetData(x).id_testcase;
+			var testCaseTestedBy = oTable.fnGetData(x).tested_by;
+			var testCaseTestedOn = oTable.fnGetData(x).tested_on;
+			var testCasePreRequisite = oTable.fnGetData(x).pre_requisite;
+			var testCaseDescription = oTable.fnGetData(x).testcase_description;
+			var testCaseResults = oTable.fnGetData(x).results;
+			var testCaseComments = oTable.fnGetData(x).comments;
+			var testCaseId = oTable.fnGetData(x).id_testcase;
+			
+			console.log("id_task: " + JSON.stringify(testCaseTaskId));
+			console.log("task_id - " + testCaseTaskId + " - testcase_id - " + testCaseId);
+			var json = {"task_id": testCaseTaskId, "testcase_id": testCaseId, "status": "", "tested_by": "", "tested_on": "", "pre_requisite": testCasePreRequisite, "testcase_description": testCaseDescription, "results": testCaseResults, "comments": testCaseComments};
+		
+			resetAll(json);
+		}
+		
+		oTable.api().ajax.reload();
+		
+		 $('#resetModal').modal('hide');
+		
+	});
+	
 	$('#createTestCase').submit(function(event) {
 	       
-		
 		var taskId = $('#task_id').val();
 		var status = $('#status').val();
 		var testedBy = $('#tested_by').val();
@@ -198,8 +252,16 @@ $(document).ready(function() {
 	            xhr.setRequestHeader("Content-Type", "application/json");
 	        },
 	        success: function(d) {
-	            console.log('Response: ' + d.status);
-	       
+	            
+	        	if(d.status == 1){
+	        		location.hash = "alert"
+	        		
+	        		console.log("Falha");
+	       		 	$("#opFailTestCaseResponse" ).toggle();
+	       		 	$("#opFailTestCaseResponse").html("<b>Description must not be empty</b>").delay(1500).fadeOut()
+	            
+	        	}
+	        	
 	            oTable.api().ajax.reload();
 	            /*oTable.ajax.reload( null, false );
 	    		oTable.ajax.reload();*/
@@ -249,15 +311,34 @@ $(document).ready(function() {
     // Get the table's lenght
 	/*For new API: 
 	 * var data = table.rows().data();
-	 * var rows = data.length*/
+	 * var rows = data.length
+	 */
  
     // Get value Task ID
 	$('#refresh').click(function() {
 		console.log("Updating");
 		
 		oTable.api().ajax.reload();
+		
 	});
+	
+//Send form when enter key is pressed
+/*	
+ * $("textarea").bind("keydown", function(event) {
+		// track enter key
+		var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
+	    if (keycode == 13) { // keycode for enter key
+	    	// force the 'Enter Key' to implicitly click the Update button
+	    	document.getElementById('defaultConfirm').click();
+	    	return false;
+	    } else  {
+	    	return true;
+	    }
+	}); 
+*
+*/
 
+//END OF DOCUMENTS READY
 });
 
 /*Click envent to increment id_taks conter, had to be implement here to make sure
@@ -275,19 +356,18 @@ $(document).on('click', '.newTestCase', function(e){
 	id.value = rows + 1;
 });
 
-/***********JQUERY SORTABLE******************/
-
 
 /***********NEW API******************/
 $(document).on('click', '.moveup', function(e){
 	console.log("up");
 	
 	/*Index of row is get by the taskId value due to reference problems that 
-	 * prevents the use of oTable.fnGetPosition(this);*/
+	 * prevents the use of oTable.fnGetPosition(this); -------- althought globalPos can be used -------*/
 	var taskId = $(this).closest('tr').find('td:eq(0)').html();
 	var index = taskId - 1;
 	console.log("Index:" + index);
 	
+	/*Verify if move up event is beig executed when there is no more row above */
 	if ((index-1) >= 0){
     	
 		/*Resposable for changing for visually changing the rows of the table
@@ -316,6 +396,36 @@ $(document).on('click', '.moveup', function(e){
    
         oSettings.aoData = clonedData;
         oTable.fnDraw();
+        
+        var first = true;
+        for(x = 0; x<2; x++){
+        	
+        	//globalPos+1 -> used to represent the task_id for each regitry, 
+        	//it is incremented by 1 because task_id starts from 1 and globalPos from 0
+        	var pos = globalPos+1;
+        	console.log("globalPos: " + pos);
+        	
+	        var testCaseIdMoved = oTable.fnGetData(globalPos).id_testcase;
+	        var testCaseTaskIdMoved = pos;
+	        
+	        var testCaseIdAbove = oTable.fnGetData(globalPos - 1).id_testcase;
+	        var testCaseTaskIdAbove = pos - 1;
+	        
+	        /*Logic for idMoved and idBelow are inverted because the rows are already changed when the compiler reach this block*/
+	        if(first){
+	        	first = false;
+		        console.log("task_idAbove - " + testCaseTaskIdMoved + " - testcase_idAbove - " + testCaseIdMoved);
+		        json = {"task_id": testCaseTaskIdMoved, "testcase_id": testCaseIdMoved} 
+		        updateSort(json);
+		        
+	        }
+	        else{
+	        	console.log("task_idMoved - " + testCaseTaskIdAbove + " - testcase_idMoved - " + testCaseIdAbove);
+		        json = {"task_id": testCaseTaskIdAbove, "testcase_id": testCaseIdAbove} 
+		        updateSort(json);
+	        }
+        }
+        oTable.api().ajax.reload();
     }
 });
 
@@ -326,8 +436,10 @@ $(document).on('click', '.movedown', function(e){
 	var index = taskId - 1;
 	
 	console.log("Index:" + index);
-	
-	if ((index+1) >= 0){
+	var totalRecords = oTable.fnSettings().fnRecordsTotal();
+	console.log("TotalRecords: " + totalRecords);
+	/*Verify if move down event is beig executed when there is no more row below */
+	if ((index+1) < totalRecords){
     	
 		var data = oTable.fnGetData();
         oTable.fnClearTable();
@@ -353,12 +465,42 @@ $(document).on('click', '.movedown', function(e){
    
         oSettings.aoData = clonedData;
         oTable.fnDraw();
+        
+        var first = true;
+        for(x = 0; x<2; x++){
+        	
+        	//globalPos+1 -> used to represent the task_id for each regitry, 
+        	//it is incremented by 1 because task_id starts from 1 and globalPos from 0
+        	var pos = globalPos+1;
+        	console.log("globalPos: " + pos);
+        	
+	        var testCaseIdMoved = oTable.fnGetData(globalPos).id_testcase;
+	        var testCaseTaskIdMoved = pos;
+	        
+	        var testCaseIdBelow = oTable.fnGetData(globalPos + 1).id_testcase;
+	        var testCaseTaskIdBelow = pos + 1;
+	        
+	        if(first){
+	        	first = false;
+		        console.log("task_idBelow - " + testCaseTaskIdMoved + " - testcase_idBelow - " + testCaseIdMoved);
+		        json = {"task_id": testCaseTaskIdMoved, "testcase_id": testCaseIdMoved} 
+		        updateSort(json);
+		        
+	        }
+	        else{
+	        	console.log("task_idMoved - " + testCaseTaskIdBelow + " - testcase_idMoved - " + testCaseIdBelow);
+		        json = {"task_id": testCaseTaskIdBelow, "testcase_id": testCaseIdBelow} 
+		        updateSort(json);
+	        }
+        }
+        oTable.api().ajax.reload();
     }
 });
 
 /*Button to save the new sort defined by the user, it get the data in the order that 
  * was organized by the user and send it rows data to the updateSort() function, which will persist
  * into the database the new order*/
+/*NOT BEING USED*/
 $(document).on('click', '#saveSort', function(e){
 	var json;
 	var testCaseTaskId = 0;
@@ -379,7 +521,7 @@ $(document).on('click', '#saveSort', function(e){
 		var testCaseComments = oTable.fnGetData(x).comments;
 		var testCaseid = oTable.fnGetData(x).id_testcase;
 		testCaseTaskId++;
-		console.log("Data: " + JSON.stringify(testCaseStatus) );
+		console.log("Data: " + JSON.stringify(testCaseStatus));
 		console.log("task_id - " + testCaseTaskId + " - testcase_id - " + testCaseid);
 		json = {"task_id": testCaseTaskId, "testcase_id": testCaseid} 
 	
@@ -407,6 +549,26 @@ function updateSort(json){
         		 console.log("Falha");
         		 $("#opFailTestCaseResponse" ).toggle();
         		 $("#opFailTestCaseResponse").html("<b>An error has ocurred while saving</b>").delay(1500).fadeOut()
+        	 }    
+        },
+        async: false
+    });
+}
+
+function resetAll(json){
+	$.ajax({
+    	url: "/AutomacaoTestes/resetAllTestCase.json",
+        data: JSON.stringify(json),
+        type: "POST",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("Accept", "text/plain");
+            xhr.setRequestHeader("Content-Type", "application/json");
+        },
+        success: function(d) {
+        	 if(d.status == 1){
+        		 console.log("Falha");
+        		 $("#opFailTestCaseResponse" ).toggle();
+        		 $("#opFailTestCaseResponse").html("<b>An error has ocurred while reseting</b>").delay(1500).fadeOut()
         	 }    
         },
         async: false
@@ -460,9 +622,9 @@ $(document).on('click', 'a.edit', function() {
 	var testCaseDescription = $(this).closest('tr').find('td:eq(5)').html();
 	var testCaseResults = $(this).closest('tr').find('td:eq(6)').html();
 	var testCaseComments = $(this).closest('tr').find('td:eq(7)').html();
-	var testCaseId = $(this).closest('tr').find('td:eq(8)').html();
+	//testCaseId -> Is being filled through the row click event, that gets the id_testcase value via fnGetData()
 
-	console.log("TAKSID: " + taskId);
+	console.log("TaskID: " + taskId);
 	
 	/*Add to the modal the values get from the rendered table*/
 	$(".modal-body #testcase_id").val(testCaseId);
@@ -497,11 +659,21 @@ $(document).on('click', 'a.reset', function() {
 	var id_ticket = $(this).data('id');
 	var taskId = $(this).closest('tr').find('td:eq(0)').html();
 	var testCaseStatus = $(this).closest('tr').find('td:eq(1)').html();
+	var testCasePreRequisite = $(this).closest('tr').find('td:eq(4)').html();
+	var testCaseDescription = $(this).closest('tr').find('td:eq(5)').html();
+	var testCaseResults = $(this).closest('tr').find('td:eq(6)').html();
+	var testCaseComments = $(this).closest('tr').find('td:eq(7)').html();
 	
 	$(".modal-footer #reset_testcase_id").val(id_ticket);
 	$(".modal-footer #reset_task_id").val(taskId);
 	$(".modal-footer #reset_testcase_status").val(testCaseStatus);
+	
+	$(".modal-footer #reset_pre_requisite").val(testCasePreRequisite);
+	$(".modal-footer #reset_description").val(testCaseDescription);
+	$(".modal-footer #reset_results").val(testCaseResults);
+	$(".modal-footer #reset_comments").val(testCaseComments);
 });
+
 
 /* Function to "Delete Ticket" modal on click */
 $(document).on('click', 'a.delete', function() {
@@ -510,4 +682,5 @@ $(document).on('click', 'a.delete', function() {
 	var id_ticket = $(this).data('id');
 
 	$(".modal-footer #delete_testcase_id").val(id_ticket);
+	
 });

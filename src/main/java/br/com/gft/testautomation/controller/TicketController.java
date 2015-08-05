@@ -92,7 +92,6 @@ public class TicketController {
         return "tickets";
     }
 	
-	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/addTicket", method = RequestMethod.POST)
 	public String releaseFormSubmit(@ModelAttribute("ticket") Ticket ticket, BindingResult result,
 			@RequestParam("project") String project,
@@ -163,7 +162,6 @@ public class TicketController {
 	 * Receive as the parameters from the previous page: release project, release tag and and
 	 * id release. These parameters are received to properly show to the user that they are
 	 * accessing the correct page. */
-	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/ticketsList", method = RequestMethod.GET)
 	public ModelAndView initTicketPage(@RequestParam("project") String project,
 				@RequestParam("tag") String tag, 
@@ -429,35 +427,6 @@ public class TicketController {
 		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
 	}
 	
-	/** Map the URL updateTicket on POST method. 
-	 * Receive as parameters the following attributes to be edited: ticket developer,
-	 * ticket tester and ticket status. The others parameters are used to properly redirect
-	 * the page after the edit happens. */
-	/*NOT-BEING-USED-TO-BE-DELETED*/
-	@RequestMapping(value = "/updateTicket", method = RequestMethod.POST)
-	public String updateTicket(@ModelAttribute("project") String project,
-			@ModelAttribute("tag") String tag,
-			@ModelAttribute("id_release") Integer id_release,
-			@ModelAttribute("ticket") Ticket ticket,
-			@RequestParam("id_ticket") Integer id_ticket,
-			@RequestParam("jira") String jira,
-			@RequestParam("description") String description,
-			@RequestParam("environment") String environment,
-			@RequestParam("tester") String tester,
-			@RequestParam("developer") String developer,
-			@RequestParam("status") String status) {
-		
-		System.out.println("Jira: " + ticket.getJira() 
-					+ " - Description: " + ticket.getDescription() 
-					+ " - Environment: " + ticket.getEnvironment()
-					+ " - Developer: " + ticket.getDeveloper());
-		ticketDao.saveOrUpdate(ticket);				
-		
-		/* Redirect to the ticketsList URL using the received parameters */
-		return "redirect:ticketsList?project="+project+"&tag="+tag+"&id_release="+id_release;
-	}
-	
-	
 	//Controller that receives an AJAX call to EDIT a ticket registry
 	@RequestMapping(value="/editTicketAjax", method=RequestMethod.POST, 
 			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -483,22 +452,7 @@ public class TicketController {
 		return "{\"status\":"+status+"}";
 	}
 		
-	//Delete info
-	/*NOT-BEING-USED-TO-BE-DELETED*/
-	@RequestMapping(value = "/deleteTicket", method = RequestMethod.POST)
-		public String deleteTicket(@RequestParam("delete_id_ticket") Long id) {
 		
-		List<TestCases> listTestCase = testCaseDao.findAllByTicketId(id);
-		if(listTestCase.size() > 0){
-			return "redirect:ticketsList?emsg=true";
-		}
-		else{
-			ticketDao.delete(id);
-			return "redirect:ticketsList";
-
-		}
-	}
-	
 	//Controller that receives an AJAX call to DELETE a ticket registry
 	@RequestMapping(value="/deleteTicketAjax", method=RequestMethod.POST, 
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

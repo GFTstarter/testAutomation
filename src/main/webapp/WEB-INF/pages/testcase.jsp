@@ -6,7 +6,8 @@
     <tiles:putAttribute name="body">
 		<!-- Main container -->
 		<div class="container">
-		<a name="alert"></a>
+		<a name="alert"></a>	 <!-- page jump -->
+		<span id="alert"></span> <!-- page jump -->
 			<div class="row">
 				<div>
 					<ol class="breadcrumb">
@@ -67,9 +68,9 @@
 								<tr>
 									<th class="lastLine">Time to run all tests:</th>
 									<td class="lastLine time">${run_time}</td>
-									<td class="lastLine"><a title="Click to edit the field" 
-										href="#" class="editHeader" data-toggle="modal" data-id="${id_ticket}">
-											<span class="glyphicon glyphicon-pencil"></span>
+									<td class="lastLine">
+										<a title="Click to edit the field" href="#" class="editHeader" data-toggle="modal" data-id="${id_ticket}">
+										<span class="glyphicon glyphicon-pencil"></span>
 									</a></td>				
 								</tr>
 							</table>
@@ -80,7 +81,7 @@
 							
 								<thead>
 									<tr>
-										<th>Task ID</th>
+										<th>Step</th>
 										<th>Status</th>
 										<th>Tested By</th>
 										<th>Tested On</th>
@@ -91,18 +92,20 @@
 										<th id="tcId">Testcase ID</th>
 										<th></th>
 										<th></th>
-										<th></th>
-										<th></th>
+										<!--  <th></th> BUTTON RESET TESTS - REMOVED-->
+										<!-- <th></th>  BUTTON PLAY TEST - REMOVED-->
 										<th></th>
 									</tr>
 								</thead>
 								<tbody>
 								</tbody>
 							</table>
-							<a class="btn btn-primary" id="refresh">Refresh</a><a href="#alert" class="btn btn-primary" id="saveSort">Save</a>
+							<!-- <a class="btn btn-primary" id="refresh">Refresh</a>  -->
+							<!-- <a href="#alert" class="btn btn-primary" id="saveSort">Save</a> -->
+							<a title="Click to Reset Tests field" href="#" class="btn btn-primary reset" data-toggle="modal"> 
+							<!-- <span class="glyphicon glyphicon-erase"></span> --> Reset All</a>
 						</div>
 					</div>
-					<!--  <a href="#alert" class="btn btn-primary btn-lg" id="saveSort">Save</a>-->
 					<div class="footer"></div>
 					
 					<!-- Add new testCase table -->
@@ -157,7 +160,7 @@
 						<a href="refreshTicket?project=${project}&tag=${tag}&jira=${jira}&id_release=${id_release}"
 						   class="btn btn-primary">Back</a>
 		
-						<button type="submit" class="btn btn-primary newTestCase" id="buttonfloat">Add new Test Case</button>
+						<button type="submit" class="btn btn-primary newTestCase" id="buttonfloat">Add new Step</button>
 						<input type="hidden" name="id_ticket" id="ticketId" value="${id_ticket}" />
 						<input type="hidden" name="td_description" value="${description}" />
 						<input type="hidden" name="td_tag" value="${tag}" />
@@ -235,6 +238,7 @@
 		
 									<form:input path="testcase_id" type="hidden" name="testcase_id" id="testcase_id" value="" />
 									<form:input path="task_id" type="hidden" name="task_id" id="taskId" value="" />
+									
 									<input type="hidden" name="id_ticket" id="ticket_id" value="${id_ticket}" />
 								 	<input type="hidden" name="tc_description" value="${description}" /> 
 									<input type="hidden" name="tc_tag" value="${tag}" />
@@ -246,7 +250,7 @@
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									<button type="submit" class="btn btn-primary">Save changes</button>
+									<button id="defaultConfirm" type="submit" class="btn btn-primary">Save changes</button>
 								</div>
 							</form:form>
 						</div>
@@ -264,6 +268,7 @@
 								</button>
 								<h4 class="modal-title" id="myModalLabel">Edit the time to run all tests</h4>
 							</div>
+							<!-- updateTime -->
 							<form:form method="POST" commandName="ticket" action="updateTime" role="form" cssClass="form-horizontal">
 								<div class="modal-body">
 									<div class="form-group">
@@ -345,7 +350,7 @@
 					</div>		
 				</div>
 		
-				<!-- Modal Reset Tests "clean fields: Status, Tested By, Tested On, Comments " -->
+				<!-- Modal Reset Tests "clean fields: Status, Tested By, Tested On" -->
 				<div class="modal fade" id="resetModal" tabindex="-1" role="dialog"
 					aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
@@ -357,9 +362,14 @@
 								<h4 class="modal-title" id="myModalLabel">Information!</h4>
 							</div>
 		
-							<div class="modal-body">You want to reset the test results?</div>
+							<div class="modal-body">Do you want to reset all the tests?</div>
 							<!-- resetTestCase -->
-							<form:form id="resetTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/resetTestCaseAjax.json" role="form">
+							<div class="modal-footer">
+								<a href="#alert" class="btn btn-primary" id="resetAllTestCase">Confirm</a>
+								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+							
+							<!-- <form:form id="resetAllTestCase" method="POST" commandName="testCase" action="${pageContext.request.contextPath}/resetAllTestCase.json" role="form">
 								<input type="hidden" name="id_ticket" value="${id_ticket}" />
 								<input type="hidden" name="tf_description" value="${description}" />
 								<input type="hidden" name="tf_tag" value="${tag}" />
@@ -373,10 +383,14 @@
 									<input type="hidden" name="reset_testcase_id" id="reset_testcase_id" value="" />
 									<input type="hidden" name="reset_task_id" id="reset_task_id" value="" />
 									<input type="hidden" name="reset_testcase_status" id="reset_testcase_status" value="" />
+									<input type="hidden" name="reset_pre_requisite" id="reset_pre_requisite" value="" />
+									<input type="hidden" name="reset_description" id="reset_description" value="" />
+									<input type="hidden" name="reset_results" id="reset_results" value="" />
+									<input type="hidden" name="reset_comments" id="reset_comments" value="" />
 									<button type="submit" class="btn btn-primary">Confirm</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+									
 								</div>
-							</form:form>
+							</form:form>-->
 						</div>
 					</div>
 				</div>
@@ -393,7 +407,7 @@
 								<h4 class="modal-title" id="myModalLabel">Information!</h4>
 							</div>
 		
-							<div class="modal-body">You want to set the test results?</div>
+							<div class="modal-body">Do you want to set the test results?</div>
 		
 							<form:form method="POST" commandName="testCase" action="playTestCase" role="form">
 								<input type="hidden" name="id_ticket" value="${id_ticket}" />
@@ -444,7 +458,7 @@
 														
 								<div class="modal-footer">
 									<input type="hidden" name="delete_testcase_id" id="delete_testcase_id" value="${id_ticket}" />
-									<button type="submit" class="btn btn-danger">Confirm</button>
+									<button id="deleteFocus" type="submit" class="btn btn-danger">Confirm</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 								</div>
 							</form:form>

@@ -9,11 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -22,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.gson.Gson;
 
 import br.com.gft.testautomation.common.login.LoginUtils;
-import br.com.gft.testautomation.common.model.Parameter;
 import br.com.gft.testautomation.common.model.Release;
 import br.com.gft.testautomation.common.model.Ticket;
 import br.com.gft.testautomation.common.repositories.ParameterDao;
@@ -64,7 +61,6 @@ public class ReleaseController{
 	
 	/** Map the URL getList on GET method.
 	 * Prepares the releases.jsp page to be properly displayed with the list of Releases. */
-	/*NOT-BEING-USED-TO-BE-DELETED*/
 	@RequestMapping(value = "/getList", method = RequestMethod.GET)
 	public ModelAndView getReleaseList(ModelMap model, SessionStatus status){
 		
@@ -110,34 +106,8 @@ public class ReleaseController{
         return jsonData;
     }
 	
-	/** Map the URL addRelease on POST method. 
-	 * Receives the Release object from the form on the modal, and a BindingResult object
-	 * to validate the information submitted. */
-	/*NOT-BEING-USED-TO-BE-DELETED*/
-	@RequestMapping(value = "/addRelease", method = RequestMethod.POST)
-	public String releaseFormSubmit(@ModelAttribute("release") Release release, BindingResult result){
-		
-		/* Validate the Release object and return a BindingResult object */
-		releaseValidator.validate(release, result);
-		
-		/* If the BindingResult object has errors: */
-		if(result.hasErrors()){
-			/* Get back to the releases.jsp page with a error message displaying */
-			return "redirect:getList?msg=true";
-		}else{
-			/* If the object has no errors, insert the object in the database using 
-			 * the save method of ReleaseDaoImpl bean, and redirect to the releases.jsp
-			 * page using the GetList URL. */
-			try {
-				releaseDao.saveOrUpdate(release);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-			return "redirect:getList";
-		}				
-	}
 	
-	//AJAX
+	//AJAX Map the URL createRelease on POST method.
 	@RequestMapping(value="/createRelease", method=RequestMethod.POST, 
             		produces = MediaType.APPLICATION_JSON_VALUE, 
             		consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -168,29 +138,7 @@ public class ReleaseController{
 		return "{\"status\":"+status+"}";
     }
 	
-	/** Map the URL editRelease, that comes from a modal, on the POST method.
-	 * Receives the necessary parameters to update the Release of that row. */
-	/*NOT-BEING-USED-TO-BE-DELETED*/
-	@RequestMapping(value = "/editRelease", method = RequestMethod.POST)
-	public String editRelease(@ModelAttribute("release") Release release, BindingResult result){
-		
-		/* Validate the receive parameters, in case they are empty */
-		if ((release.getProject() == "") || (release.getTag() == "") || (release.getName() == "")){
-			/* If they are empty, back to the same page, now showing a message */
-			return "redirect:getList?msg=true";
-		}else{
-			/* If they are not empty, back to the same page after the update in the database */
-			//Search for a document with the id given to be updated
-			
-			System.out.println(release.getId_release());
-			
-			releaseDao.saveOrUpdate(release);
-			
-			return "redirect:getList";
-		}		
-	}
-	
-	//AJAX
+	//AJAX  Map the URL editReleaseAjax
 	@RequestMapping(value="/editReleaseAjax", method=RequestMethod.POST, 
 			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -217,16 +165,7 @@ public class ReleaseController{
 		return "{\"status\":"+status+"}";
 	}
 	
-	/*NOT-BEING-USED-TO-BE-DELETED*/
-	@RequestMapping(value = "/deleteRelease", method = RequestMethod.POST)
-	public String deleteRelease(@RequestParam("delete_id_release") Long id){
-		
-		releaseDao.delete(id);
-		
-		return "redirect:getList";
-	}
-	
-	//AJAX
+	//AJAX Map the URL deleteReleaseAjax
 	@RequestMapping(value="/deleteReleaseAjax", method=RequestMethod.POST, 
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
