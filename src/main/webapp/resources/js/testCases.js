@@ -66,13 +66,11 @@ $(document).ready(function() {
 	
 	/*Toggle column visibility on/off by click
 	* 
-	* 
-	function fnShowHide( iCol )
+	function fnShowHide(iCol)
 	{
 		var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
     	oTable.fnSetColumnVis( iCol, bVis ? false : true );
     }
-    *
     *
     */
 	
@@ -141,9 +139,13 @@ $(document).ready(function() {
 	          	           
 	            $('#editModal').modal('hide');
 	            
+	            //NEW API
 	    		//oTable.ajax.reload( null, false );
 	    		//oTable.ajax.reload();
+	            
+	            //PAGE REFRESH VIA JS
 	            //window.location.reload(true);
+	            
 	            //OLD API
 	            oTable.api().ajax.reload();
 	        }
@@ -175,15 +177,19 @@ $(document).ready(function() {
 	        },
 	        success: function(d) {
 	        	
-	        	 if(d.status == 1){
+	        	if(d.status == 1){
 						console.log("Falha");
-					}    
+				}    
 	          	           
 	            $('#resetModal').modal('hide');
 	            
+	            //NEW API
 	    		//oTable.ajax.reload( null, false );
 	    		//oTable.ajax.reload();
+	            
+	            //PAGE REFRESH VIA JS
 	            //window.location.reload(true);
+	            
 	            //OLD API
 	            oTable.api().ajax.reload();
 	        }
@@ -222,9 +228,7 @@ $(document).ready(function() {
 		}
 		
 		oTable.api().ajax.reload();
-		
-		 $('#resetModal').modal('hide');
-		
+		$('#resetModal').modal('hide');
 	});
 	
 	$('#createTestCase').submit(function(event) {
@@ -254,17 +258,15 @@ $(document).ready(function() {
 	        success: function(d) {
 	            
 	        	if(d.status == 1){
+	        		//PAGE JUMP
 	        		location.hash = "alert"
-	        		
+	        			
 	        		console.log("Falha");
 	       		 	$("#opFailTestCaseResponse" ).toggle();
 	       		 	$("#opFailTestCaseResponse").html("<b>Description must not be empty</b>").delay(1500).fadeOut()
-	            
 	        	}
 	        	
 	            oTable.api().ajax.reload();
-	            /*oTable.ajax.reload( null, false );
-	    		oTable.ajax.reload();*/
 	            
 	           //Clear fields after insert
 	            $('#datepicker').val("");
@@ -529,9 +531,6 @@ $(document).on('click', '#saveSort', function(e){
 	}
 	
 	oTable.api().ajax.reload();
-	
-	/*$("#opTestCaseResponse" ).toggle();
-	$("#opTestCaseResponse").html("<b>Table saved.</b>").delay(1500).fadeOut()*/
 });
 
 //Function to save the new sort defined by the user, update the task_id column on by the testcase_id
@@ -682,5 +681,4 @@ $(document).on('click', 'a.delete', function() {
 	var id_ticket = $(this).data('id');
 
 	$(".modal-footer #delete_testcase_id").val(id_ticket);
-	
 });
